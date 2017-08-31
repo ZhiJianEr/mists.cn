@@ -1,0 +1,79 @@
+********************************************************************************
+DUPLICATOR-LITE PACKAGE-LOG: 2017-08-28 12:59:07
+NOTICE: Do NOT post to public sites or forums 
+********************************************************************************
+VERSION:	1.2.20
+WORDPRESS:	4.8.1
+PHP INFO:	7.1.6 | SAPI: fpm-fcgi
+SERVER:		nginx/1.13.3 
+PHP TIME LIMIT: (0) no time limit imposed 
+PHP MAX MEMORY: 2048M (128M default) 
+MEMORY STACK: 2MB 
+
+********************************************************************************
+DATABASE:
+********************************************************************************
+BUILD MODE:   PHP(query limit - 100)
+MYSQLTIMEOUT: 5000
+MYSQLDUMP:    Is Supported 
+TABLES: total:82 | filtered:0 | create:82 
+FILTERED: [] 
+SQL CREATED: 20170828_e8bfb7e99bbee7bd91_5d93102c9a015c3f5957170828125341_database.sql 
+SQL FILE SIZE: 19.62MB (20576063) 
+SQL FILE TIME: 2017-08-28 12:59:09 
+SQL RUNTIME: 1.51 sec. 
+
+******************************************************************************** 
+ARCHIVE (ZIP): 
+******************************************************************************** 
+ARCHIVE DIR:  /home/web/www/themists-blog 
+ARCHIVE FILE: 20170828_e8bfb7e99bbee7bd91_5d93102c9a015c3f5957170828125341_archive.zip 
+FILTERS: *OFF* 
+DIRS:
+	not set 
+FILES:
+	not set 
+EXTS:  not set 
+---------------------------------------- 
+COMPRESSING 
+SIZE:	 
+STATS:	Dirs  | Files  
+SQL ADDED: 20170828_e8bfb7e99bbee7bd91_5d93102c9a015c3f5957170828125341_database.sql 
+ZipArchive Object
+(
+    [status] => 0
+    [statusSys] => 0
+    [numFiles] => 1
+    [filename] => /home/web/www/themists-blog/wp-snapshots/tmp/20170828_e8bfb7e99bbee7bd91_5d93102c9a015c3f5957170828125341_archive.zip
+    [comment] => 
+)
+ 
+COMPRESSION RESULT: '1' 
+COMPRESSED SIZE: 2.3MB 
+ARCHIVE RUNTIME: 1.17 sec. 
+MEMORY STACK: 8MB 
+
+******************************************************************************** 
+MAKE INSTALLER: 
+******************************************************************************** 
+Build Start 
+Build Finished 
+Preping for use 
+PACK SIZE:  
+Template parsed with new data 
+Complete [/home/web/www/themists-blog/wp-snapshots/tmp/20170828_e8bfb7e99bbee7bd91_5d93102c9a015c3f5957170828125341_installer.php] 
+Added to archive 
+
+******************************************************************************** 
+INTEGRITY CHECKS: 
+******************************************************************************** 
+SQL File: 19.62MB 
+Installer File: 434.95KB 
+Archive File: 2.3MB  
+
+********************************************************************************
+RECORD ID:[1]
+TOTAL PROCESS RUNTIME: 2.78 sec.
+PEAK PHP MEMORY USED: 12.55MB
+DONE PROCESSING => 20170828_e8bfb7e99bbee7bd91 2017-08-28 12:59:10
+ 

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<title>欢迎来到激战2资料站-迷雾网!</title>
+<meta charset="UTF-8">
+<style>
+    body {
+        background-image: url("wp-content/uploads/2017/08/deluxe-bg.df4471b4.jpg");
+        background-repeat: no-repeat;
+        background-position: right top;
+        background-attachment: fixed;
+        color: white;
+    }
+    .container {
+        max-width: 480px;
+        margin: 0 auto;
+        border: solid;
+        text-align: center;
+    }
+</style>
+</head>
+<div class="container">
+<p>迷雾网正在维护中...</p>
+<p>更多消息请关注官方QQ群：453455689</p>
+</div>
+<body>
