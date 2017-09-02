@@ -21,10 +21,13 @@ class vc_row_inner extends tdc_composer_block {
 
 
 		if (tdc_state::is_live_editor_iframe() || tdc_state::is_live_editor_ajax()) {
-			$buffy = '<div class="tdc-inner-row">' . $buffy . '</div>';
+			$buffy = '<div id="' . $this->block_uid . '" class="tdc-inner-row">' . $buffy . '</div>';
 		}
 
 		td_global::set_in_inner_row(false);
+
+		// td-composer PLUGIN uses to add blockUid output param when this shortcode is retrieved with ajax (@see tdc_ajax)
+		do_action( 'td_block_set_unique_id', array( &$this ) );
 
 		return $buffy;
 	}

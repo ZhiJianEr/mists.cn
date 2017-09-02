@@ -1,10 +1,10 @@
     <!-- Instagram -->
     <?php if (td_util::get_option('tds_footer_instagram') == 'show') { ?>
 
-        <div class="td-main-content-wrap td-footer-instagram-container td-container-wrap">
+        <div class="td-main-content-wrap td-footer-instagram-container td-container-wrap <?php echo td_util::get_option('td_full_footer_instagram'); ?>">
             <?php
             //get the instagram id from the panel
-            $tds_footer_instagram_id = td_util::get_option('tds_footer_instagram_id');
+            $tds_footer_instagram_id = td_instagram::strip_instagram_user(td_util::get_option('tds_footer_instagram_id'));;
             ?>
 
             <div class="td-instagram-user">
@@ -44,79 +44,21 @@
         ?>
     </div>
 
-    <div class="td-footer-outer-wrapper td-container-wrap">
+    <div class="td-footer-outer-wrapper td-container-wrap <?php echo td_util::get_option('td_full_footer'); ?>">
         <!-- Footer -->
         <?php
-        if (td_util::get_option('tds_footer') != 'no') {
-            td_api_footer_template::_helper_show_footer();
-        }
+            if (td_util::get_option('tds_footer') != 'no') {
+                td_api_footer_template::_helper_show_footer();
+            }
         ?>
 
         <!-- Sub Footer -->
-
-        <?php if (td_util::get_option('tds_sub_footer') != 'no') { ?>
-            <div class="td-sub-footer-container">
-                <div class="td-container">
-                    <div class="td-pb-row">
-                        <div class="td-pb-span12 td-sub-footer-menu">
-                            <?php
-                            wp_nav_menu(array(
-                                'theme_location' => 'footer-menu',
-                                'menu_class'=> 'td-subfooter-menu',
-                                'fallback_cb' => 'td_wp_footer_menu'
-                            ));
-
-                            //if no menu
-                            function td_wp_footer_menu() {
-                                //do nothing?
-                            }
-                            ?>
-                        </div>
-
-                        <div class="td-pb-span12 td-sub-footer-copy">
-                            <?php
-                            $tds_footer_copyright = stripslashes(td_util::get_option('tds_footer_copyright'));
-                            $tds_footer_copy_symbol = td_util::get_option('tds_footer_copy_symbol');
-
-                            //show copyright symbol
-                            if ($tds_footer_copy_symbol == '') {
-                                echo '&copy; ';
-                            }
-
-                            echo $tds_footer_copyright;
-
-
-                            // Please do not remove this Powered by notice if you want to help us continue the development of the theme.
-                            // Thanks! ~ tagDiv team ~
-                            if (TD_DEPLOY_IS_PREMIUM === false) {
-                                echo '<br>Powered by <a href="https://www.wpion.com/free-news-theme/">ionMag news theme</a>';
-                            }
-                            ?>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <?php } else {
-            if (TD_DEPLOY_IS_PREMIUM === false) {
-                ?>
-                <div class="td-sub-footer-container">
-                    <div class="td-container">
-                        <div class="td-pb-row">
-                            <div class="td-pb-span12 td-sub-footer-copy">
-                                <?php
-                                // Please do not remove this Powered by notice if you want to help us continue the development of the theme.
-                                // Thanks! ~ tagDiv team ~
-                                    echo 'Powered by <a href="https://www.wpion.com/free-news-theme/">ionMag news theme</a>';
-                                ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <?php
+        <?php
+            if (td_util::get_option('tds_sub_footer') != 'no') {
+                td_api_sub_footer_template::_helper_show_sub_footer();
             }
-        }
         ?>
+
     </div>
 </div><!--close td-outer-wrap-->
 

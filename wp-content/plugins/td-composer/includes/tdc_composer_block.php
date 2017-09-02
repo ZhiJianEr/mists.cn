@@ -19,6 +19,7 @@ class tdc_composer_block extends td_block {
 
 				'tdc_css' => '',
 				'tdc_css_class' => '',
+				'tdc_css_class_style' => '',
 
 				'full_width' => '', // param for rows @see full_width VC param
 			),
@@ -28,6 +29,10 @@ class tdc_composer_block extends td_block {
 		$unique_block_class = td_global::td_generate_unique_id() . '_rand';
 		$this->add_class($unique_block_class);
 		$this->atts['tdc_css_class'] = $unique_block_class;
+
+		 /** The _rand_style class is used by td-element-style to add style */
+	    $unique_block_class_style = $this->block_uid . '_rand_style';
+	    $this->atts['tdc_css_class_style'] = $unique_block_class_style;
 	}
 
 
@@ -113,10 +118,11 @@ class tdc_composer_block extends td_block {
 	 * Get the css from the 'css' ATT of the blocks
 	 *
 	 * @param bool $clearfixColumns - flag used to know outside if the '.clearfix' element is added as last child in vc_row and vc_row_inner
+	 * @param bool $addElementStyle - flag used to know outside if 'div' element style has been added
 	 *
 	 * @return string
 	 */
-	protected function get_block_css( &$clearfixColumns = false ) {
+	protected function get_block_css( &$clearfixColumns = false, &$addElementStyle = false ) {
 		$buffy = '';
 
 		$css = $this->get_att('css');
@@ -127,14 +133,34 @@ class tdc_composer_block extends td_block {
 		}
 
 		$tdcCss = $this->get_att( 'tdc_css' );
+		$cssOutput = '';
+		$beforeCssOutput = '';
+		$afterCssOutput = '';
+
 		if (!empty($tdcCss)) {
-			$buffy .= $this->generate_css( $tdcCss, $clearfixColumns );
+			$buffy .= $this->generate_css( $tdcCss, $clearfixColumns, $cssOutput, $beforeCssOutput, $afterCssOutput );
 		}
 
 		if (!empty($buffy)) {
 			/** scoped - @link http://www.w3schools.com/tags/att_style_scoped.asp */
 			$buffy = PHP_EOL . '<style scoped>' . PHP_EOL . $buffy . PHP_EOL . '</style>';
+		}
+
+		$tdcElementStyleCss = '';
+		if ( !empty($cssOutput) || !empty($beforeCssOutput) || !empty($afterCssOutput) ) {
+			$tdcElementStyleCss = PHP_EOL . '<div class="' . $this->get_att( 'tdc_css_class_style' ) . ' td-element-style"><style>' . $cssOutput . ' ' . $beforeCssOutput . ' ' . $afterCssOutput . '</style></div>';
+			$addElementStyle = true;
+		}
+
+		if (!empty($buffy)) {
+
+			if (!empty($tdcElementStyleCss)) {
+				return $buffy . $tdcElementStyleCss;
+			}
 			return $buffy;
+
+		} else if (!empty($tdcElementStyleCss)) {
+			return $tdcElementStyleCss;
 		}
 
 		return '';

@@ -1,6 +1,6 @@
 <div class="td-page-options-tab-wrap">
     <div class="td-page-options-tab td-page-options-tab-active" data-panel-class="td-page-option-general"><a href="#">General</a></div>
-    <div class="td-page-options-tab" data-panel-class="td-page-option-unique-articles-2"><a href="#">Unique articles</a></div>
+    <div class="td-page-options-tab" data-panel-class="td-page-option-unique-articles-2"><a href="#">Unique Articles</a></div>
 </div>
 <div class="td-meta-box-inside">
 
@@ -37,10 +37,10 @@
                     'item_id' => '',
                     'option_id' => 'td_sidebar_position',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-default.png'),
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_right', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Default', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-default.png'),
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => 'sidebar_right', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     ),
                     'selected_value' => $mb->get_the_value('td_sidebar_position')
                 ));
@@ -78,7 +78,7 @@
         </div>
 
         <div class="td-disble-message" style="display: none;">
-            <p>While using Visual Composer sidebar settings are not available. To add a sidebar on page use the widgetised sidebar block.</p>
+            <p>While using a pagebuilder sidebar settings are not available. To add a sidebar on page use the widgetised sidebar block.</p>
         </div>
     </div> <!-- /page option general -->
 

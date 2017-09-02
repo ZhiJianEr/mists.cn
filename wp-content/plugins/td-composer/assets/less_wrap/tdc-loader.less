@@ -61,12 +61,14 @@
 }
 
 body.tdcComposerLoaded {
+  background-color: #fff; // fix boxed headers color - transparent color
 
   > * {
-    visibility: visible;
+    opacity: 1;
   }
 
-  .tdc-fullscreen-loader-wrap {
+  .tdc-fullscreen-loader-wrap,
+  .screen-meta-toggle { // hide on TDC the screen option toggle from WP
     display: none;
   }
 }

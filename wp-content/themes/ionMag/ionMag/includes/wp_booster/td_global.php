@@ -107,7 +107,7 @@ class td_global {
 		if (td_global::$current_template === 'page-title-sidebar') {
 			global $post;
 
-			$td_page = get_post_meta($post->ID, 'td_page', true);
+			$td_page = td_util::get_post_meta_array($post->ID, 'td_page');
 
 			//check for this page sidebar position
 			if (empty($td_page['td_sidebar_position'])) {
@@ -241,6 +241,7 @@ class td_global {
 
 
     static $is_woocommerce_installed = false; // at the end of this file we check if woo commerce is installed
+	static $is_bbpress_installed = false; // at the end of this file we check if bbpress is installed
 
 
     /**
@@ -300,65 +301,31 @@ class td_global {
      * @var array
      */
     static $js_files_for_wp_admin = array (
-        'td_wp_admin' => array(
-	        'url' => '/includes/wp_booster/wp-admin/js/td_wp_admin.js',
-	        'show_only_on_page_slugs' => ''
-        ),
-        'td_wp_admin_color_picker' => array (
-	        'url' => '/includes/wp_booster/wp-admin/js/td_wp_admin_color_picker.js',
-	        'show_only_on_page_slugs' => ''
-        ),
-        'td_wp_admin_panel' => array (
-	        'url' => '/includes/wp_booster/wp-admin/js/td_wp_admin_panel.js',
-	        'show_only_on_page_slugs' => ''
-        ),
-        'td_edit_page' => array (
-	        'url' => '/includes/wp_booster/wp-admin/js/td_edit_page.js',
-	        'show_only_on_page_slugs' => ''
-        ),
+        'td_wp_admin' => '/includes/wp_booster/wp-admin/js/td_wp_admin.js',
+        'td_wp_admin_color_picker' => '/includes/wp_booster/wp-admin/js/td_wp_admin_color_picker.js',
+        'td_wp_admin_panel' => '/includes/wp_booster/wp-admin/js/td_wp_admin_panel.js',
+        'td_edit_page' => '/includes/wp_booster/wp-admin/js/td_edit_page.js',
 
+        'tdDemoFullInstaller' => '/includes/wp_booster/wp-admin/js/tdDemoFullInstaller.js',
+        'td_wp_admin_demos' => '/includes/wp_booster/wp-admin/js/td_wp_admin_demos.js',
+        'tdDemoProgressBar' => '/includes/wp_booster/wp-admin/js/tdDemoProgressBar.js',
 
-	    // install demos scripts
-        'tdDemoFullInstaller' => array (
-	        'url' => '/includes/wp_booster/wp-admin/js/tdDemoFullInstaller.js',
-	        'show_only_on_page_slugs' => array('td_theme_demos')
-        ),
+        'td_page_options' => '/includes/wp_booster/wp-admin/js/td_page_options.js',
+        'td_tooltip' => '/includes/wp_booster/wp-admin/js/tooltip.js',
+	    'td_confirm' => '/includes/wp_booster/wp-admin/js/tdConfirm.js',
+	    'td_detect' => '/includes/wp_booster/js_dev/tdDetect.js',
 
-        'td_wp_admin_demos' => array (
-	        'url' => '/includes/wp_booster/wp-admin/js/td_wp_admin_demos.js',
-	        'show_only_on_page_slugs' => array('td_theme_demos')
-        ),
-        'tdDemoProgressBar' => array (
-	        'url' => '/includes/wp_booster/wp-admin/js/tdDemoProgressBar.js',
-	        'show_only_on_page_slugs' => array('td_theme_demos')
-        ),
-
-
-
-        'td_page_options' => array (
-	        'url' => '/includes/wp_booster/wp-admin/js/td_page_options.js',
-	        'show_only_on_page_slugs' => ''
-        ),
-        'td_tooltip' => array (
-	        'url' => '/includes/wp_booster/wp-admin/js/tooltip.js',
-	        'show_only_on_page_slugs' => ''
-        ),
-	    'td_confirm' => array(
-		    'url' => '/includes/wp_booster/wp-admin/js/tdConfirm.js',
-		    'show_only_on_page_slugs' => ''
-	    ),
-
-		// ace code editor
-	    'td_ace' => array (
-		    'url' => '/includes/wp_booster/wp-admin/external/ace/ace.js',
-		    'show_only_on_page_slugs' => array('td_theme_panel')
-	    ),
-        'td_ace_ext_language_tools' => array (
-	        'url' => '/includes/wp_booster/wp-admin/external/ace/ext-language_tools.js',
-	        'show_only_on_page_slugs' => array('td_theme_panel')
-        )
+        'td_edit_post' => '/includes/wp_booster/wp-admin/js/td_edit_post.js',
 
     );
+
+
+    // scripts that load only on our panel. This scripts are not minified because ace does not support that
+    static $js_files_for_td_theme_panel = array (
+        'td_ace' => '/includes/wp_booster/wp-admin/external/ace/ace.js',
+        'td_ace_ext_language_tools' => '/includes/wp_booster/wp-admin/external/ace/ext-language_tools.js'
+    );
+
 
 
     /**
@@ -516,6 +483,13 @@ class td_global {
     public static $typography_settings_list = array ();
 
 
+    /**
+     * @var bool
+     * set true in @see td_background::wp_head_hook_background_logic if a bg img or color is set
+     */
+    public static $is_boxed_layout = false;
+
+
 
 
     // @todo clean this up
@@ -533,7 +507,7 @@ class td_global {
          */
         if (is_single()) {
             //read the post setting
-            $td_post_theme_settings = get_post_meta(self::$post->ID, 'td_post_theme_settings', true);
+            $td_post_theme_settings = td_util::get_post_meta_array(self::$post->ID, 'td_post_theme_settings');
             if (!empty($td_post_theme_settings['td_primary_cat'])) {
                 self::$primary_category = $td_post_theme_settings['td_primary_cat'];
                 return;
@@ -583,6 +557,10 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     td_global::$is_woocommerce_installed = true;
 }
 
+require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+if (is_plugin_active('bbpress/bbpress.php')) {
+	td_global::$is_bbpress_installed = true;
+}
 
 /**
  * td_global::$get_template_directory must be used instead of get_template_directory()

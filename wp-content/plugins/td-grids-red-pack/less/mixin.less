@@ -1,0 +1,30 @@
+// Clearfix
+.clearfix {
+  *zoom: 1;
+  &:before,
+  &:after {
+    display: table;
+    content: '';
+    line-height: 0;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+// Opacity
+.opacity(@value) {
+  @ieval: @value*100;
+  opacity: @value;
+  -ms-filter: %("progid:DXImageTransform.Microsoft.Alpha(Opacity='%a')", @ieval);
+  filter: alpha(opacity=@ieval);
+}
+
+// Transform
+.transform(@string){
+  transform: @string;
+  -webkit-transform: @string;
+  -moz-transform: @string;
+  -ms-transform: @string;
+  -o-transform: @string;
+}

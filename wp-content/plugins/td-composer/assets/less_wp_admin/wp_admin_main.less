@@ -23,6 +23,21 @@
   -moz-box-shadow: @shadow !important;
   box-shadow: @shadow !important;
 }
+// Transition
+.transition(@transition) {
+  -webkit-transition: @transition;
+  -moz-transition: @transition;
+  -o-transition: @transition;
+  transition: @transition;
+}
+// Transform
+.transform(@string){
+  transform: @string;
+  -webkit-transform: @string;
+  -moz-transform: 	 @string;
+  -ms-transform: 		 @string;
+  -o-transform: 		 @string;
+}
 @tdc_font_color: #000;
 
 // Font family
@@ -44,7 +59,16 @@ input, select, textarea {
   display: inline-block;
   position: relative;
   margin-left: 8px;
+}
 
+.tdc-panel-button,
+.edit_tdc_composer,
+#wp-admin-bar-tdc_edit {
+
+  /* hide under landscape tablet dimension */
+  @media (max-width: 767px) {
+    display: none;
+  }
 }
 
 .tdc-panel-icon {
@@ -99,7 +123,7 @@ input, select, textarea {
 .tdc-open-editor-loader {
   .tdc-panel-icon {
     background-position: 10px 9px !important;
-    background: #4db2ec url("../images/loader-small.gif") no-repeat;
+    background: #4db2ec url("../images/loader-small-blue.gif") no-repeat;
 
   }
 }
@@ -732,12 +756,38 @@ input, select, textarea {
       display: table;
     }
   }
+
+  //social counter youtube
+  .tdc-property-youtube {
+
+    .tdc-property-title {
+      position: absolute;
+      top: 5px;
+    }
+
+    .tdc-property {
+      position: relative;
+
+      input {
+        float: right;
+      }
+
+      .tdc-description {
+        clear: right;
+        line-height: 17px;
+        display: inline-block;
+        text-align: right;
+        margin: 10px 0 0 0;
+      }
+    }
+
+  }
 }
 
 #td-tab-css,
 #td-tab-design-options {
   input[type=text] {
-    z-index: 2;
+    z-index: 1;
   }
 
   .tdc-border-style,
@@ -856,9 +906,24 @@ input, select, textarea {
 
 //column text - edit content button
 .tdc-open-wpeditor {
-  font-size: 12px;
+  display: block;
+  padding: 7px 0 8px;
+  cursor: pointer;
+  text-align: center;
+  color: #fff;
+  background-color: #000;
+  min-width: 71px;
   text-decoration: none;
-  display: inline-block;
+  .transition(all 0.2s ease);
+
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: #268ac2;
+    color: #fff;
+    .transform(translateY(-1px));
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.14);
+  }
 }
 
 .tdc-css-inherited {
@@ -920,7 +985,14 @@ input, select, textarea {
   .box-shadow(none);
 }
 
-// social counter facebook
+.tdc-textarea-small {
+
+  textarea {
+    height: 200px;
+  }
+}
+
+  // social counter facebook
 .tdc-inspector-wrap {
   .tdc-property-facebook,
   .tdc-property-facebook_access_token {
@@ -944,5 +1016,274 @@ input, select, textarea {
     top: 6px;
     right: 3px;
     z-index: 1;
+  }
+}
+
+.tdc-description {
+  font-size: 11px;
+  margin: 5px 5px 0 5px;
+  color: #808080;
+}
+
+
+// image radio
+.tdc-visual-selector {
+  .tdc-property-title {
+    margin-bottom: 0;
+    line-height: 15px;
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  .tdc-property {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto 0;
+    display: table;
+  }
+
+  .tdc-property-input-radio {
+    display: none;
+  }
+
+  label {
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 16px;
+
+    div {
+      background: url('../images/sidebar/spritesheet.png');
+      background-repeat: no-repeat;
+      width: 33px;
+      height: 25px;
+      opacity: 0.24;
+
+      &:hover {
+        opacity: 0.6;
+        transition: opacity 0.2s ease;
+      }
+    }
+
+    .col_11{
+      background-position: -6px -188px;
+    }
+    .col_12_12,
+    .layout-12-12 {
+      background-position: -178px -188px;
+    }
+    .col_13_23,
+    .layout-13-23 {
+      background-position: -92px -188px;
+    }
+    .col_23_13,
+    .layout-23-13 {
+      background-position: -49px -188px;
+    }
+    .col_13_13_13 {
+      background-position: -135px -188px;
+    }
+
+    .content-horiz-left {
+      background-position: -6px -258px;
+    }
+    .content-horiz-center {
+      background-position: -49px -258px;
+    }
+    .content-horiz-right {
+      background-position: -92px -258px;
+    }
+
+    .content-vert-top {
+      background-position: -6px -328px;
+    }
+    .content-vert-center {
+      background-position: -49px -328px;
+    }
+    .content-vert-bottom {
+      background-position: -92px -328px;
+    }
+  }
+
+  .tdc-property-input-radio:checked + label {
+    div {
+      opacity: 1;
+      transition: none;
+    }
+
+    .col_11 {
+      background-position: -6px -223px;
+    }
+    .col_12_12,
+    .layout-12-12  {
+      background-position: -178px -223px;
+    }
+    .col_13_23,
+    .layout-13-23 {
+      background-position: -92px -223px;
+    }
+    .col_23_13,
+    .layout-23-13 {
+      background-position: -49px -223px;
+    }
+    .col_13_13_13 {
+      background-position: -135px -223px;
+    }
+
+    .content-horiz-left {
+      background-position: -6px -293px;
+    }
+    .content-horiz-center {
+      background-position: -49px -293px;
+    }
+    .content-horiz-right {
+      background-position: -92px -293px;
+    }
+
+    .content-vert-top{
+      background-position: -6px -363px;
+    }
+    .content-vert-center {
+      background-position: -49px -363px;
+    }
+    .content-vert-bottom {
+      background-position: -92px -363px;
+    }
+  }
+}
+
+// multipurpose image selector
+.tdc-multipurpose-img-selector {
+  padding-top: 6px;
+  padding-bottom: 2px;
+
+  .tdc-property-title {
+    padding-right: 150px;
+  }
+}
+
+// row searator
+.tdc-separator-row {
+  margin: 22px auto 20px;
+}
+
+// composer modals
+.tdcComposerLoaded {
+
+  // wrap
+  #TB_window {
+    background: url('../images/bg-modal.jpg');
+    background-size: cover;
+    background-position: center;
+    .box-shadow(0 0 20px rgba(0, 0, 0, 0.2));
+    font-family: @font1;
+    overflow: hidden;
+    padding: 0;
+
+    &:before {
+      content: '';
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      z-index: -1;
+      background: rgba(0, 69, 130, 0.8);
+      background: -moz-linear-gradient(45deg, rgba(0, 69, 130, 0.8) 0%, rgba(38, 134, 146, 0.8) 100%);
+      background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(0, 69, 130, 0.8)), color-stop(100%, rgba(38, 134, 146, 0.8)));
+      background: -webkit-linear-gradient(45deg, rgba(0, 69, 130, 0.8) 0%, rgba(38, 134, 146, 0.8) 100%);
+      background: -o-linear-gradient(45deg, rgba(0, 69, 130, 0.8) 0%, rgba(38, 134, 146, 0.8) 100%);
+      background: -ms-linear-gradient(45deg, rgba(0, 69, 130, 0.8) 0%, rgba(38, 134, 146, 0.8) 100%);
+      background: linear-gradient(45deg, rgba(0, 69, 130, 0.8) 0%, rgba(38, 134, 146, 0.8) 100%);
+    }
+  }
+
+  // title
+  #TB_title {
+    border: none !important;
+    background: none;
+    height: auto;
+
+    #TB_ajaxWindowTitle {
+      line-height: 59px;
+      padding-left: 18px;
+      text-align: center;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: #fff;
+      margin-top: 2px;
+    }
+  }
+
+  // content
+  #TB_ajaxContent {
+    padding: 36px 15px 40px !important;
+    height: auto !important;
+    color: #fff;
+    text-align: center;
+
+    div {
+      font-size: 14px;
+      padding: 0 36px;
+      line-height: 23px;
+    }
+  }
+
+  // buttons
+  .td-confirm-buttons {
+    text-align: center;
+
+    button {
+      margin-right: 18px;
+      width: auto;
+      min-width: 120px;
+      height: 50px;
+      background-color: #fff;
+      padding: 5px 12px 6px;
+      margin-top: 34px;
+      margin-bottom: 0;
+      text-transform: uppercase;
+      text-shadow: none;
+      font-size: 13px;
+      font-weight: 600;
+      color: #000;
+      .box-shadow(1px 1px 4px 0 rgba(0,0,0,0.2));
+      border: 0;
+      border-radius: 0;
+      outline: none !important;
+
+      &:hover {
+        color: #ffffff;
+        background-color: #ec4d4d;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  #TB_closeWindowButton {
+    margin: 17px !important;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.16);
+    }
+  }
+
+  // close
+  .tb-close-icon {
+    background: url('../images/sidebar/spritesheet.png');
+    background-repeat: no-repeat;
+    background-position: 0px -121px;
+    width: 29px;
+    height: 29px;
+    margin: 0 !important;
+    outline: none !important;
+    .box-shadow(none);
+
+    &:before {
+      display: none;
+    }
   }
 }

@@ -22,7 +22,10 @@ class td_block_ad_box extends td_block {
         // rec title
         $rec_title = '';
         if(!empty($custom_title)) {
-            $rec_title .= '<div class="td-block-title-wrap">' . $this->get_block_title() . '</div>';
+            $rec_title .= '<div class="td-block-title-wrap">';
+                $rec_title .= $this->get_block_title();
+                $rec_title .= $this->get_pull_down_filter();
+            $rec_title .= '</div>';
         }
 
 	    if(!empty($spot_title)) {
@@ -127,7 +130,10 @@ class td_block_ad_box extends td_block {
         // rec title
         $rec_title = '';
         if(!empty($custom_title)) {
-            $rec_title .= '<div class="td-block-title-wrap">' . $this->get_block_title() . '</div>';
+            $rec_title .= '<div class="td-block-title-wrap">';
+                $rec_title .= $this->get_block_title();
+                $rec_title .= $this->get_pull_down_filter();
+            $rec_title .= '</div>';
         }
         if(!empty($spot_title)) {
             $rec_title .= '<span class="td-adspot-title">' . $spot_title . '</span>';
@@ -520,7 +526,8 @@ class td_block_ad_box extends td_block {
 
             $buffy .= '<script type="text/javascript">' . "\n";
 
-            $buffy .= 'var td_screen_width = document.body.clientWidth;' . "\n";
+	        //fix for adsense custom ad size settings not loading right when having the speedbooster active
+            $buffy .= 'var td_screen_width = window.innerWidth;' . "\n";
 
 
             if ($default_ad_sizes[$spot_id]['disable_m'] == false and !empty($default_ad_sizes[$spot_id]['m_w']) and !empty($default_ad_sizes[$spot_id]['m_h'])) {
@@ -611,7 +618,10 @@ class td_block_ad_box extends td_block {
         // rec title
         $rec_title = '';
         if(!empty($custom_title)) {
-            $rec_title .= '<div class="td-block-title-wrap">' . $this->get_block_title() . '</div>';
+            $rec_title .= '<div class="td-block-title-wrap">';
+                $rec_title .= $this->get_block_title();
+                $rec_title .= $this->get_pull_down_filter();
+            $rec_title .= '</div>';
         }
         if(!empty($spot_title)) {
             $rec_title .= '<span class="td-adspot-title">' . $spot_title . '</span>';

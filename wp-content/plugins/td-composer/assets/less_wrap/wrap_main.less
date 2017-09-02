@@ -50,6 +50,14 @@ body.tdc #wpfooter {
   #wpbody {
     height: 100%;
   }
+
+
+  .ie8, .ie9, .ie10, .ie11 {
+    a:active,
+    a:hover {
+      outline: invert none medium;
+    }
+  }
 }
 
 body.tdc #wpbody-content {
@@ -81,6 +89,7 @@ body.tdc #wpbody-content {
   opacity: 1;
   -webkit-transition: opacity 0.4s;
   transition: opacity 0.4s;
+  .box-shadow(0 0 24px 0 rgba(0, 0, 0, 0.04));
 }
 
 .tdc-remove-iframe {
@@ -116,9 +125,10 @@ body.tdc #wpbody-content {
 #tdc-dragged-helper {
   display: none;
   position: fixed;
-  border: 1px solid #398ecd;
-  width: 100px;
-  height: 100px;
+  //border: 1px solid #398ecd;
+  margin: 10px;
+  width: 40px;
+  height: 24px;
   top: 0;
   left: 0;
   z-index: 2;
@@ -128,6 +138,7 @@ body.tdc #wpbody-content {
   -ms-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
+  cursor: grab;
 }
 
 .minimize {

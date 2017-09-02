@@ -36,7 +36,7 @@
     text-align: left;
   }
 
-  .td-pulldown-filter-display-option span,
+  .td-pulldown-filter-display-option,
   .block-title a,
   .block-title span,
   .block-title label,
@@ -48,7 +48,8 @@
     color: #fff;
   }
 
-  .td-pulldown-filter-display-option span {
+  .td-pulldown-filter-display-option span,
+  .td-pulldown-filter-display-option i {
     .opacity(0.6);
   }
 
@@ -72,6 +73,59 @@
       .opacity(0.1);
     }
   }
+
+
+  // Social counter styles
+  .td_social_type .td_social_button a {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.18);
+
+    &:hover {
+      color: @td_theme_color;
+    }
+  }
+
+  .td-social-style2 {
+    .td_social_type,
+    .td-sp:before {
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+  }
+
+  .td-social-style3,
+  .td-social-style4,
+  .td-social-style8,
+  .td-social-style9,
+  .td-social-style10 {
+    .td_social_type {
+      &:hover span {
+        color: #aeaeae;
+      }
+    }
+  }
+
+  .td-social-style5,
+  .td-social-style6 {
+    .td_social_type:hover .td-social-box {
+      background-color: #444;
+    }
+  }
+
+  .td-social-style7 {
+    .td_social_type .td-social-box {
+      background-color: #444;
+    }
+  }
+
+  .td-social-style8 {
+    .td_social_type {
+      .td-social-box {
+        border-color: rgba(255, 255, 255, 0.22);
+      }
+    }
+  }
+
+
 
   select {
     background-color: transparent;
@@ -126,6 +180,8 @@
     .opacity(0.11);
   }
 }
+
+
 
 /* Social media */
 .footer-social-wrap {

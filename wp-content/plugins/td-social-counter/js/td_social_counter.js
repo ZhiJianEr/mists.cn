@@ -60,6 +60,7 @@
                             client_secret: val_facebook_security_key,
                             grant_type: 'client_credentials'
                         },
+                        dataType: 'json',
                         beforeSend: function( jqXHR ) {
 
                             // Clear the facebook social key
@@ -83,7 +84,8 @@
                             }
                         }
                     }).done(function( data, textStatus, jqXHR ) {
-                        facebook_access_token.val( data.replace( 'access_token=' , '' ) );
+                        //facebook_access_token.val( data.replace( 'access_token=' , '' ) );
+                        facebook_access_token.val( data.access_token );
 
                         // We need it just for td-composer, for updating a shortcode model from sidebar inputs
                         if ( td_social_counter_panel.hasClass( 'tdc-tab-content' ) ) {

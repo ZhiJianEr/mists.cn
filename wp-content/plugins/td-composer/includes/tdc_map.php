@@ -5,12 +5,298 @@
  * Internal map file
  */
 
+$block_general_params_array = td_config::get_map_block_general_array();
+
+// Remove the 'Color presets' option on Newsmag
+if ( 'Newsmag' === TD_THEME_NAME ) {
+	foreach ($block_general_params_array as $key => $block_general_param) {
+		if ( 'color_preset' === $block_general_param['param_name']) {
+			array_splice($block_general_params_array, $key, 1);
+			break;
+		}
+	}
+}
+
+$external_shortcodes = array(
+	'td_block_social_counter' => array(
+		"name" => 'Social Counter',
+        "base" => 'td_block_social_counter',
+        "class" => 'td_block_social_counter',
+        "controls" => "full",
+        "category" => __('Blocks', TD_THEME_NAME),
+        'icon' => 'icon-pagebuilder-td_social_counter',
+        "params" => array_merge(
+			$block_general_params_array,
+            array(
+                array(
+                    "param_name" => "style",
+                    "type" => "dropdown",
+                    "value" => array('Default' => '', 'Style 1 - Default black' => 'style1', 'Style 2 - Default with border' => 'style2 td-social-font-icons', 'Style 3 - Default colored circle' => 'style3 td-social-colored', 'Style 4 - Default colored square' => 'style4 td-social-colored', 'Style 5 - Boxes with space' => 'style5 td-social-boxed', 'Style 6 - Full boxes' => 'style6 td-social-boxed', 'Style 7 - Black boxes' => 'style7 td-social-boxed', 'Style 8 - Boxes with border' => 'style8 td-social-boxed td-social-font-icons', 'Style 9 - Colored circles' => 'style9 td-social-boxed td-social-colored', 'Style 10 - Colored squares' => 'style10 td-social-boxed td-social-colored'),
+                    "heading" => 'Style',
+                    "description" => "Style of the Social Counter widget",
+                    "holder" => "div",
+                    "class" => "tdc-dropdown-extrabig"
+                ),
+                array(
+                    "param_name" => "separator",
+                    "type" => "horizontal_separator",
+                    "value" => "",
+                    "class" => ""
+                ),
+                array(
+                    "param_name" => "facebook",
+                    "type" => "textfield",
+                    "value" => "",
+                    "heading" => __("Facebook id", TD_THEME_NAME) . '&nbsp<a href="http://forum.tagdiv.com/tagdiv-social-counter-tutorial/" target="_blank">How to get the App Id and the Security Key</a>',
+                    "description" => "",
+                    "holder" => "div",
+                    "class" => "tdc-textfield-big"
+                ),
+	            array(
+		            "param_name" => "facebook_app_id",
+		            "type" => "textfield",
+		            "value" => "",
+		            "heading" => __("Facebook App Id", TD_THEME_NAME),
+		            "description" => "",
+		            "holder" => "div",
+		            "class" => "tdc-textfield-big"
+	            ),
+	            array(
+		            "param_name" => "facebook_security_key",
+		            "type" => "textfield",
+		            "value" => "",
+		            "heading" => __("Facebook Security Key", TD_THEME_NAME),
+		            "description" => "",
+		            "holder" => "div",
+		            "class" => "tdc-textfield-big"
+	            ),
+	            array(
+		            "param_name" => "facebook_access_token",
+		            "type" => "textfield",
+		            "value" => "",
+		            "heading" => __("Facebook Access Token", TD_THEME_NAME) . '&nbsp;<a class="td_access_token facebook" href="#">Get Access Token</a><i class="td_access_token_info" style="display: none; color: #F00; margin-left: 10px">Please wait...</i>',
+		            "description" => "",
+		            "holder" => "div",
+		            "class" => "tdc-textfield-big"
+	            ),
+                array(
+                    "param_name" => "twitter",
+                    "type" => "textfield",
+                    "value" => "",
+                    "heading" => __("Twitter id", TD_THEME_NAME),
+                    "description" => "",
+                    "holder" => "div",
+                    "class" => "tdc-textfield-big"
+                ),
+                array(
+                    "param_name" => "youtube",
+                    "type" => "textfield",
+                    "value" => "",
+                    "heading" => __("Youtube id", TD_THEME_NAME),
+                    "description" => "User: www.youtube.com/user/<b style='color: #000'>ENVATO</b><br/>Channel: www.youtube.com/ <b style='color: #000'>channel/UCJr72fY4cTaNZv7WPbvjaSw</b>",
+                    "holder" => "div",
+                    "class" => "tdc-textfield-big"
+                ),
+//                array(
+//                    "param_name" => "vimeo",
+//                    "type" => "textfield",
+//                    "value" => "",
+//                    "heading" => __("Vimeo id", TD_THEME_NAME),
+//                    "description" => "",
+//                    "holder" => "div",
+//                    "class" => "tdc-textfield-big"
+//                ),
+                array(
+                    "param_name" => "googleplus",
+                    "type" => "textfield",
+                    "value" => '',
+                    "heading" => __("Google Plus User", TD_THEME_NAME),
+                    "description" => "",
+                    "holder" => "div",
+                    "class" => "tdc-textfield-big"
+                ),
+                array(
+                    "param_name" => "instagram",
+                    "type" => "textfield",
+                    "value" => '',
+                    "heading" => __("Instagram User", TD_THEME_NAME),
+                    "description" => "",
+                    "holder" => "div",
+                    "class" => "tdc-textfield-big"
+                ),
+                array(
+                    "param_name" => "soundcloud",
+                    "type" => "textfield",
+                    "value" => '',
+                    "heading" => __("Soundcloud User", TD_THEME_NAME),
+                    "description" => "",
+                    "holder" => "div",
+                    "class" => "tdc-textfield-big"
+                ),
+                array(
+                    "param_name" => "rss",
+                    "type" => "textfield",
+                    "value" => '',
+                    "heading" => __("Feed subscriber count", TD_THEME_NAME),
+                    "description" => "Write the number of followers",
+                    "holder" => "div",
+                    "class" => "tdc-textfield-big"
+                ),
+                array(
+                    "param_name" => "open_in_new_window",
+                    "type" => "dropdown",
+                    "value" => array('- Same window -' => '', 'New window' => 'y'),
+                    "heading" => __("Open in", TD_THEME_NAME),
+                    "description" => "",
+                    "holder" => "div",
+                    "class" => "tdc-dropdown-extrabig"
+                ),
+                array(
+                    "param_name" => "separator",
+                    "type" => "horizontal_separator",
+                    "value" => "",
+                    "class" => ""
+                ),
+                array(
+                    'param_name' => 'el_class',
+                    'type' => 'textfield',
+                    'value' => '',
+                    'heading' => 'Extra class',
+                    'description' => 'Style particular content element differently - add a class name and refer to it in custom CSS',
+                    'class' => 'tdc-textfield-extrabig',
+                    'group' => ''
+                ),
+                array(
+                    'param_name' => 'css',
+                    'value' => '',
+                    'type' => 'css_editor',
+                    'heading' => 'Css',
+                    'group' => 'Design options',
+                ),
+	            array(
+	                'param_name' => 'tdc_css',
+	                'value' => '',
+	                'type' => 'tdc_css_editor',
+	                'heading' => '',
+	                'group' => 'Design options',
+	            ),
+            )
+        )
+	),
+
+	'rev_slider' => array(
+		'external_shortcode' => true,
+		'base' => 'rev_slider',
+		'name' => __( 'Revolution Slider', 'td_composer' ),
+		'icon' => 'icon-wpb-revslider',
+		'category' => __( 'Content', 'td_composer' ),
+		'description' => __( 'Place Revolution slider', 'td_composer' ),
+		'params' => array(
+			array(
+				'type' => 'textfield',
+				'heading' => __( 'Slider', 'td_composer' ),
+				'param_name' => 'alias',
+				'admin_label' => true,
+				'value' => '',
+				'save_always' => true,
+				'description' => "<em>Place here the alias for embedding your slider <br><b>example: slider1</b></em>",
+				'class' => '',
+			),
+//			array(
+//				'type' => 'textfield',
+//				'heading' => __( 'Extra class', 'td_composer' ),
+//				'param_name' => 'el_class',
+//				'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS', 'td_composer' ),
+//				'value' => '',
+//				'class' => 'tdc-textfield-extrabig',
+//			),
+		),
+	),
+
+// Example: Register an external shortcode BUT IMPLEMENTED in theme
+
+//	'button' => array(
+//		'external_shortcode' => true,
+//		'base' => 'button',
+//		'name' => 'button',
+//		'params' => array(
+//			array(
+//				'type' => 'textfield',
+//				'heading' => __( 'Label', 'td_composer' ),
+//				'param_name' => 'label',
+//				'description' => '',
+//				'value' => '',
+//				'class' => 'tdc-textfield-extrabig',
+//			),
+//			array(
+//				'type' => 'textfield',
+//				'heading' => __( 'Color', 'td_composer' ),
+//				'param_name' => 'color',
+//				'description' => '',
+//				'value' => '',
+//				'class' => 'tdc-textfield-extrabig',
+//			),
+//			array(
+//				'type' => 'textfield',
+//				'heading' => __( 'Size', 'td_composer' ),
+//				'param_name' => 'size',
+//				'description' => '',
+//				'value' => '',
+//				'class' => 'tdc-textfield-extrabig',
+//			),
+//			array(
+//				'type' => 'textfield',
+//				'heading' => __( 'Type', 'td_composer' ),
+//				'param_name' => 'type',
+//				'description' => '',
+//				'value' => '',
+//				'class' => 'tdc-textfield-extrabig',
+//			),
+//			array(
+//				'type' => 'textfield',
+//				'heading' => __( 'Target', 'td_composer' ),
+//				'param_name' => 'target',
+//				'description' => '',
+//				'value' => '',
+//				'class' => 'tdc-textfield-extrabig',
+//			),
+//			array(
+//				'type' => 'textfield',
+//				'heading' => __( 'Link', 'td_composer' ),
+//				'param_name' => 'link',
+//				'description' => '',
+//				'value' => '',
+//				'class' => 'tdc-textfield-extrabig',
+//			),
+//		),
+//	),
+
+// Example: Register an external shortcode WITHOUT implementation
+
+//	'fake_button' => array(
+//		'external_shortcode' => true,
+//		'base' => 'fake_button',
+//		'name' => 'fake_button',
+//		'params' => array(
+//			array(
+//				'type' => 'textfield',
+//				'heading' => __( 'Label', 'td_composer' ),
+//				'param_name' => 'label',
+//				'description' => '',
+//				'value' => '',
+//				'class' => 'tdc-textfield-extrabig',
+//			),
+//		),
+//	)
+);
+tdc_mapper::set_external_shortcodes( $external_shortcodes );
+
 
 // map the blocks from our themes
 add_action('td_wp_booster_loaded', 'tdc_map_theme_blocks', 10002);
 function tdc_map_theme_blocks() {
 	foreach (td_api_block::get_all() as $block) {
-		if (isset($block['map_in_visual_composer']) && $block['map_in_visual_composer'] === true) { // map only shortcodes that have to appear in the composer
+		if (isset($block['map_in_td_composer']) && $block['map_in_td_composer'] === true ) { // map only shortcodes that have to appear in the composer
 			tdc_mapper::map_shortcode($block);
 		}
 	}
@@ -41,77 +327,95 @@ function tdc_load_internal_shortcodes() {
 }
 
 
-
-tdc_mapper::map_shortcode(array(
-	'base' => 'vc_row',
-	'name' => __('Row' , 'td_composer'),
-	'is_container' => true,
-	'icon' => 'tdc-icon-row',
-	'category' => __('Content', 'td_composer'),
-	'description' => __('Row description', 'td_composer'),
-	'params' => array(
-
-
-
-		// internal modifier - does not update atts
-		array (
-			'param_name' => 'tdc_row_columns_modifier',
-			'heading' => 'Layout',
-			'type' => 'dropdown',
-			'value' => array (
-				'1/1' => '11',
-				'2/3 + 1/3' => '23_13',
-				'1/3 + 2/3' => '13_23',
-				'1/3 + 1/3 + 1/3' => '13_13_13'
-			),
-			'class' => 'tdc-row-col-dropdown tdc-dropdown-extrabig',
+$rowParams = array(
+	// internal modifier - does not update atts
+	array (
+		'param_name' => 'tdc_row_columns_modifier',
+		'heading' => 'Layout',
+		'type' => 'dropdown',
+		'value' => array (
+			'1/1' => '11',
+			'2/3 + 1/3' => '23_13',
+			'1/3 + 2/3' => '13_23',
+			'1/3 + 1/3 + 1/3' => '13_13_13'
 		),
+		'tdc_dropdown_images' => true, // show image selector instead of classic dropdown
+		'class' => 'tdc-row-col-dropdown tdc-visual-selector',
+	),
 
-		array (
-			'param_name' => 'full_width',
-			'heading' => 'Row stretch',
-			'type' => 'dropdown',
-			'value' => array (
-				'Default' => '',
-				'Stretch row' => 'stretch_row',
-				'Stretch row and content' => 'stretch_row_content td-stretch-content',
-				'Stretch row and content (with paddings)' => 'stretch_row_content_no_space td-stretch-content',
-			),
-			'class' => 'tdc-row-stretch-dropdown tdc-dropdown-extrabig',
-		),
+	array(
+		"param_name" => "separator",
+		"type" => "horizontal_separator",
+		"value" => "",
+		"class" => ""
+	),
 
-		array(
-			'type' => 'textfield', // should have been vc_el_id but we use textfield
-			'heading' => 'Row ID',
-			'param_name' => 'el_id',
-			'description' => 'Make sure that this is unique on the page',
-			'class' => 'tdc-textfield-extrabig',
+	array (
+		'param_name' => 'full_width',
+		'heading' => 'Row stretch',
+		'type' => 'dropdown',
+		'value' => array (
+			'Default' => '',
+			'Stretch row' => 'stretch_row',
+			'Stretch row and content' => 'stretch_row_content td-stretch-content',
+			'Stretch row and content (with paddings)' => 'stretch_row_content_no_space td-stretch-content',
 		),
-		array(
-			'type' => 'textfield',
-			'heading' => 'Extra class',
-			'param_name' => 'el_class',
-			'description' => 'Add a class to this row',
-			'class' => 'tdc-textfield-extrabig',
-		),
+		'class' => 'tdc-row-stretch-dropdown tdc-dropdown-extrabig',
+	),
 
-		array (
-			'param_name' => 'css',
-			'value' => '',
-			'type' => 'css_editor',
-			'heading' => 'Css',
-			'group' => 'Design options',
-		),
-		array (
-            'param_name' => 'tdc_css',
-            'value' => '',
-            'type' => 'tdc_css_editor',
-            'heading' => '',
-            'group' => 'Design options',
-        ),
+	array(
+		'type' => 'textfield', // should have been vc_el_id but we use textfield
+		'heading' => 'Row ID',
+		'param_name' => 'el_id',
+		'description' => 'Make sure that this is unique on the page',
+		'class' => 'tdc-textfield-extrabig',
+	),
+
+	array(
+		'type' => 'textfield',
+		'heading' => 'Extra class',
+		'param_name' => 'el_class',
+		'description' => 'Add a class to this row',
+		'class' => 'tdc-textfield-extrabig',
+	),
+
+	array (
+		'param_name' => 'css',
+		'value' => '',
+		'type' => 'css_editor',
+		'heading' => 'Css',
+		'group' => 'Design options',
+	),
+
+	array (
+        'param_name' => 'tdc_css',
+        'value' => '',
+        'type' => 'tdc_css_editor',
+        'heading' => '',
+        'group' => 'Design options',
+    ),
+);
+// Remove the 'Row stretch' option on Newsmag
+if ( 'Newsmag' === TD_THEME_NAME ) {
+	foreach ($rowParams as $key => $rowParam) {
+		if ( 'full_width' === $rowParam['param_name']) {
+			array_splice($rowParams, $key, 1);
+			break;
+		}
+	}
+}
+
+tdc_mapper::map_shortcode(
+	array(
+		'base' => 'vc_row',
+		'name' => __('Row' , 'td_composer'),
+		'is_container' => true,
+		'icon' => 'tdc-icon-row',
+		'category' => __('Content', 'td_composer'),
+		'description' => __('Row description', 'td_composer'),
+		'params' => $rowParams
 	)
-));
-
+);
 
 tdc_mapper::map_shortcode(
 	array(
@@ -147,7 +451,6 @@ tdc_mapper::map_shortcode(
 	)
 );
 
-
 tdc_mapper::map_shortcode(
 	array(
 		'base' => 'vc_row_inner',
@@ -170,7 +473,15 @@ tdc_mapper::map_shortcode(
 					'1/3 + 2/3' => '13_23',
 					'1/3 + 1/3 + 1/3' => '13_13_13'
 				),
-				'class' => 'tdc-innerRow-col-dropdown tdc-dropdown-extrabig'
+				'tdc_dropdown_images' => true, // show image selector instead of classic dropdown
+				'class' => 'tdc-innerRow-col-dropdown tdc-visual-selector'
+			),
+
+			array(
+				"param_name" => "separator",
+				"type" => "horizontal_separator",
+				"value" => "",
+				"class" => ""
 			),
 
 			array(
@@ -206,7 +517,6 @@ tdc_mapper::map_shortcode(
 		)
 	)
 );
-
 
 tdc_mapper::map_shortcode(
 	array(
@@ -245,14 +555,13 @@ tdc_mapper::map_shortcode(
 
 tdc_mapper::map_shortcode(
 	array(
-		'map_in_visual_composer' => true,
 		'base' => 'vc_column_text',
 		'name' => __( 'Column text', 'td_composer' ),
 		'icon' => 'icon-wpb-column-text',
 		'category' => __( 'Content', 'td_composer' ),
 		'description' => __( 'Column text description', 'td_composer' ),
 		'params' => array_merge(
-			td_config::get_map_block_general_array(),
+			$block_general_params_array,
 			array(
 				array(
 					"param_name" => "content",
@@ -275,7 +584,7 @@ tdc_mapper::map_shortcode(
 					'param_name' => 'el_class',
 					'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS', 'td_composer' ),
 					'value' => '',
-					'class' => '',
+					'class' => 'tdc-textfield-extrabig',
 				),
 
 				array (
@@ -293,13 +602,12 @@ tdc_mapper::map_shortcode(
 		            'group' => 'Design options',
 		        ),
 			)
-		),
+		)
 	)
 );
 
 tdc_mapper::map_shortcode(
 	array(
-		'map_in_visual_composer' => true,
 		'base' => 'vc_raw_html',
 		'name' => __( 'Raw html', 'td_composer' ),
 		'icon' => 'icon-wpb-raw-html',
@@ -344,7 +652,6 @@ tdc_mapper::map_shortcode(
 
 tdc_mapper::map_shortcode(
 	array(
-		'map_in_visual_composer' => true,
 		'base' => 'vc_empty_space',
 		'name' => __( 'Empty space', 'td_composer' ),
 		'icon' => 'icon-wpb-empty-space',
@@ -367,29 +674,26 @@ tdc_mapper::map_shortcode(
 				'value' => '',
 				'class' => 'tdc-textfield-extrabig',
 			),
-
-			array (
+			array(
 				'param_name' => 'css',
 				'value' => '',
 				'type' => 'css_editor',
 				'heading' => 'Css',
 				'group' => 'Design options',
 			),
-			array (
+			array(
 	            'param_name' => 'tdc_css',
 	            'value' => '',
 	            'type' => 'tdc_css_editor',
 	            'heading' => '',
 	            'group' => 'Design options',
-	        ),
-		),
+	        )
+		)
 	)
 );
 
-
 tdc_mapper::map_shortcode(
 	array(
-		'map_in_visual_composer' => true,
 		'base' => 'vc_widget_sidebar',
 		'name' => __( 'Widget sidebar', 'td_composer' ),
 		'icon' => 'icon-wpb-layout_sidebar',
@@ -397,39 +701,29 @@ tdc_mapper::map_shortcode(
 		'description' => __( 'Widget sidebar description', 'td_composer' ),
 		'params' => array(
 			array(
-				'type' => 'textfield',
-				'heading' => __( 'Widget title', 'td_composer' ),
-				'param_name' => 'title',
-				'description' => __( 'Enter text used as widget title (Note: located above content element)', 'td_composer' ),
-				'value' => '',
-				'class' => 'tdc-textfield-extrabig',
-			),
-			array (
-				'param_name' => 'sidebar_id',
-				'heading' => 'Sidebar',
-				'type' => 'dropdown',
+					'param_name' => 'sidebar_id',
+					'heading' => 'Sidebar',
+					'type' => 'dropdown',
 
-				// The parameter is set at 'admin_head' action, there the global $wp_registered_sidebars being set (otherwise it could be set at 'init')
-				// Important! Here is too early to use the global $wp_registered_sidebars, because it isn't set
-				'value' => array(),
-				'class' => 'tdc-widget-sidebar-dropdown tdc-dropdown-extrabig',
-			),
+					// The parameter is set at 'admin_head' action, there the global $wp_registered_sidebars being set (otherwise it could be set at 'init')
+					// Important! Here is too early to use the global $wp_registered_sidebars, because it isn't set
+					'value' => array(),
+					'class' => 'tdc-widget-sidebar-dropdown tdc-dropdown-extrabig',
+				),
 			array(
-				'type' => 'textfield',
-				'heading' => __( 'Extra class', 'td_composer' ),
-				'param_name' => 'el_class',
-				'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS', 'td_composer' ),
-				'value' => '',
-				'class' => 'tdc-textfield-extrabig',
-			),
-		),
+					'type' => 'textfield',
+					'heading' => __( 'Extra class', 'td_composer' ),
+					'param_name' => 'el_class',
+					'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS', 'td_composer' ),
+					'value' => '',
+					'class' => 'tdc-textfield-extrabig',
+				)
+		)
 	)
 );
 
-
 tdc_mapper::map_shortcode(
 	array(
-		'map_in_visual_composer' => true,
 		'base' => 'vc_single_image',
 		'name' => __( 'Single image', 'td_composer' ),
 		'icon' => 'icon-wpb-empty-space',
@@ -449,7 +743,7 @@ tdc_mapper::map_shortcode(
                 "param_name" => "image_url",
                 "type" => "textfield",
                 "value" => '',
-                "heading" => __( "Image url", 'td_composer' ),
+                "heading" => __( "Image link", 'td_composer' ),
                 "description" => "",
                 "holder" => "div",
                 "class" => "tdc-textfield-extrabig"
@@ -466,12 +760,41 @@ tdc_mapper::map_shortcode(
 			array(
                 "param_name" => "height",
                 "type" => "textfield",
-                "value" => '200',
+                "value" => '',
                 "heading" => __( 'Image height', 'td_composer' ),
                 "description" => "",
                 "holder" => "div",
                 "class" => "tdc-textfield-small"
             ),
+			array(
+				"param_name" => "repeat",
+				"type" => "dropdown",
+				"value" => array(
+					'No Repeat' => '',
+					'Tile' => 'repeat',
+					'Tile Horizontally' => 'repeat-x',
+					'Tile Vertically' => 'repeat-y'
+				),
+				"heading" => __( 'Image repeat', 'td_composer' ),
+				"description" => "",
+				"holder" => "div",
+				"class" => "tdc-dropdown-big",
+			),
+			array(
+				"param_name" => "size",
+				"type" => "dropdown",
+				"value" => array(
+					'Cover' => '',
+					'Full Width' => '100% auto',
+					'Full Height' => 'auto 100%',
+					'Auto' => 'auto',
+					'Contain' => 'contain'
+				),
+				"heading" => __( 'Image size', 'td_composer' ),
+				"description" => "",
+				"holder" => "div",
+				"class" => "tdc-dropdown-big",
+			),
             array(
                 "param_name" => "alignment",
                 "type" => "dropdown",
@@ -541,7 +864,6 @@ tdc_mapper::map_shortcode(
 
 tdc_mapper::map_shortcode(
 	array(
-		'map_in_visual_composer' => true,
 		'base' => 'vc_separator',
 		'name' => __( 'Separator', 'td_composer' ),
 		'icon' => 'icon-wpb-empty-space',
@@ -655,64 +977,47 @@ tdc_mapper::map_shortcode(
 
 tdc_mapper::map_shortcode(
 	array(
-		'map_in_visual_composer' => true,
 		'base' => 'vc_wp_recentcomments',
 		'name' => __( 'Recent comments', 'td_composer' ),
 		'icon' => 'icon-wpb-empty-space',
 		'category' => __( 'Content', 'td_composer' ),
 		'description' => __( 'Description', 'td_composer' ),
-		'params' => array(
-			array(
-                "param_name" => "custom_title",
-				"type" => "textfield",
-				"value" => "Block title",
-				"heading" => 'Custom title for this block:',
-				"description" => "Optional - a title for this block, if you leave it blank the block will not have a title",
-				"holder" => "div",
-				"class" => "",
-            ),
-			array(
-				"param_name" => "block_template_id",
-				"type" => "dropdown",
-				"value" => td_util::get_block_template_ids(),
-				"heading" => 'Header template:',
-				"description" => "Header template used by the current block",
-				"holder" => "div",
-				"class" => "tdc-dropdown-big",
-			),
-			array(
-                "param_name" => "number",
-				"type" => "textfield",
-				"value" => "",
-				"heading" => 'Number of comments:',
-				"description" => "Optional - a title for this block, if you leave it blank the block will not have a title",
-				"holder" => "div",
-				"class" => "",
-				'class' => 'tdc-textfield-small'
-            ),
-			array(
-                'param_name' => 'el_class',
-                'type' => 'textfield',
-                'value' => '',
-                'heading' => 'Extra class',
-                'description' => 'Style particular content element differently - add a class name and refer to it in custom CSS',
-                'class' => 'tdc-textfield-extrabig'
-            ),
+		'params' => array_merge(
+			$block_general_params_array,
+            array(
+				array(
+	                "param_name" => "number",
+					"type" => "textfield",
+					"value" => "",
+					"heading" => 'Number of comments:',
+					"description" => "Optional - a title for this block, if you leave it blank the block will not have a title",
+					"holder" => "div",
+					'class' => 'tdc-textfield-small'
+	            ),
+				array(
+	                'param_name' => 'el_class',
+	                'type' => 'textfield',
+	                'value' => '',
+	                'heading' => 'Extra class',
+	                'description' => 'Style particular content element differently - add a class name and refer to it in custom CSS',
+	                'class' => 'tdc-textfield-extrabig'
+	            ),
 
-			array (
-                'param_name' => 'css',
-                'value' => '',
-                'type' => 'css_editor',
-                'heading' => 'Css',
-                'group' => 'Design options',
-            ),
-            array (
-                'param_name' => 'tdc_css',
-                'value' => '',
-                'type' => 'tdc_css_editor',
-                'heading' => '',
-                'group' => 'Design options',
-            ),
+				array (
+	                'param_name' => 'css',
+	                'value' => '',
+	                'type' => 'css_editor',
+	                'heading' => 'Css',
+	                'group' => 'Design options',
+	            ),
+	            array (
+	                'param_name' => 'tdc_css',
+	                'value' => '',
+	                'type' => 'tdc_css_editor',
+	                'heading' => '',
+	                'group' => 'Design options',
+	            ),
+            )
 		),
 	)
 );
@@ -720,50 +1025,63 @@ tdc_mapper::map_shortcode(
 
 function register_external_shortcodes() {
 
-	require_once('shortcodes/rev_slider.php' );
+	global $shortcode_tags;
+	require_once('shortcodes/tdc_external_shortcode.php' );
 
-	add_action('td_wp_booster_loaded', 'tdc_load_external_shortcodes',  10002);
-	function tdc_load_external_shortcodes() {
-		td_global_blocks::add_lazy_shortcode('rev_slider');
+	// Overwrite the existing shortcode
+	// In composer - a custom placeholder is used instead of the callback result
+	// In frontend, for registered shortcodes - a wrapper is applied to the existing callback result
+	// In frontend, for not registered shortcodes - a 'missing shortcode' placeholder is shown
+
+	$mapped_shortcodes = tdc_mapper::get_mapped_shortcodes();
+
+	foreach ( tdc_mapper::get_external_shortcodes() as $shortcode_tag => $shortcode_params ) {
+
+		if ( isset( $shortcode_tags[ $shortcode_tag ] ) ) {
+
+//			// The social counter plugin, even it is external shorcode, is our shortcode and we trust its js
+			if ( 'td_block_social_counter' !== $shortcode_tag ) {
+				add_shortcode( $shortcode_tag, 'tdc_proxy_external_shortcode' );
+			}
+
+		} else {
+			add_shortcode( $shortcode_tag, 'tdc_proxy_missing_external_shortcode' );
+		}
+
+		// Important! We need to check the already mapped shortcodes, because social counter plugin comes, even it is external, it's our external plugin, and it does itself mapping
+		if ( ! isset( $mapped_shortcodes[ $shortcode_tag ] ) ) {
+			tdc_mapper::map_shortcode( $shortcode_params );
+		}
 	}
+}
 
-	tdc_mapper::map_shortcode(
-		array(
-			'map_in_visual_composer' => true,
-			'base' => 'rev_slider',
-			'name' => __( 'Revolution Slider', 'td_composer' ),
-			'icon' => 'icon-wpb-revslider',
-			'category' => __( 'Content', 'td_composer' ),
-			'description' => __( 'Place Revolution slider', 'td_composer' ),
-			'params' => array(
-				array(
-					'type' => 'textfield',
-					'heading' => __( 'Widget title', 'td_composer' ),
-					'param_name' => 'title',
-					'description' => __( 'Enter text used as widget title (Note: located above content element)', 'td_composer' ),
-					'value' => '',
-					'class' => 'tdc-textfield-extrabig',
-				),
-				array(
-					'type' => 'textfield',
-					'heading' => __( 'Slider', 'td_composer' ),
-					'param_name' => 'alias',
-					'admin_label' => true,
-					'value' => '',
-					'save_always' => true,
-					'description' => __( 'Select your Revolution Slider', 'td_composer' ),
-					'class' => 'tdc-textfield-extrabig',
-				),
-				array(
-					'type' => 'textfield',
-					'heading' => __( 'Extra class', 'td_composer' ),
-					'param_name' => 'el_class',
-					'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS', 'td_composer' ),
-					'value' => '',
-					'class' => 'tdc-textfield-extrabig',
-				),
-			),
-		)
-	);
+function tdc_proxy_external_shortcode($atts, $content, $tag) {
+	$external_shortcode = new tdc_external_shortcode($tag);
+	return $external_shortcode->render($atts, $content, $tag);
+}
+
+/**
+ * Proxy function - to overwrite the existing shortcode
+ */
+function wrap_external_shortcodes() {
+
+	foreach ( tdc_mapper::get_external_shortcodes() as $shortcode_tag => $shortcode_params ) {
+		global $shortcode_tags;
+
+		if ( ! isset( $shortcode_tags[ $shortcode_tag ] ) ) {
+
+			// In frontend, for not registered shortcodes - a 'missing shortcode' info placeholder is shown
+			add_shortcode( $shortcode_tag, 'tdc_proxy_missing_external_shortcode');
+		}
+	}
+}
+
+function tdc_proxy_missing_external_shortcode($atts, $content, $tag) {
+	if ( current_user_can( 'administrator' ) ) {
+
+		// The unique class 'td_uid_...' is just added to see that shortcode update in tagDiv composer
+		return '<div class="td_block_wrap tdc-missing-external-shortcode ' . tdc_util::generate_unique_id() . '"><span>' . $tag . '</span>Missing shortcode. Activate plugin!</div>';
+	}
+	return '';
 }
 

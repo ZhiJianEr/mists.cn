@@ -45,38 +45,61 @@ class td_block_social_counter extends td_block {
 
         $buffy = '';
 
-        $buffy .= '<div class="' . $this->get_block_classes($additional_classes) . '">';
+        $socialEmpty = true;
+		$socialBuffy = '';
 
+        foreach (td_social_icons::$td_social_icons_array as $td_social_id => $td_social_name) {
+            if (!empty($atts[$td_social_id])) {
 
-		//get the block js
-		$buffy .= $this->get_block_css();
+                $socialEmpty = false;
 
-
-        $buffy .= $this->get_block_title();
-
-        $buffy .= '<div class="td-social-list">';
-            foreach (td_social_icons::$td_social_icons_array as $td_social_id => $td_social_name) {
-                if (!empty($atts[$td_social_id])) {
-
-                    $access_token = '';
-                    if (array_key_exists($td_social_id . '_access_token', $atts)) {
-                        $access_token = $atts[$td_social_id . '_access_token'];
-                    }
-                    $social_network_meta = $this->get_social_network_meta($td_social_id, $atts[$td_social_id], $td_social_api, $access_token);
-
-                    $buffy .= '<div class="td_social_type td-pb-margin-side td_social_' . $td_social_id . '">';
-                    $buffy .= '<div class="td-social-box">';
-                        $buffy .= '<div class="td-sp td-sp-' . $td_social_id . '"></div>';
-                        $buffy .= '<span class="td_social_info">' . number_format($social_network_meta['api']) . '</span>';
-                        $buffy .= '<span class="td_social_info td_social_info_name">' . $social_network_meta['text'] . '</span>';
-                        $buffy .= '<span class="td_social_button"><a href="' . $social_network_meta['url'] . '"' . $td_target . '>' .
-                            $social_network_meta['button'] . '</a></span>';
-                        $buffy .= '</div>';
-                    $buffy .= '</div>';
+                if ($td_social_id === 'vimeo') {
+                    continue;
                 }
+
+                $access_token = '';
+                if (array_key_exists($td_social_id . '_access_token', $atts)) {
+                    $access_token = $atts[$td_social_id . '_access_token'];
+                }
+                $social_network_meta = $this->get_social_network_meta($td_social_id, $atts[$td_social_id], $td_social_api, $access_token);
+
+                $socialBuffy .= '<div class="td_social_type td-pb-margin-side td_social_' . $td_social_id . '">';
+                $socialBuffy .= '<div class="td-social-box">';
+                    $socialBuffy .= '<div class="td-sp td-sp-' . $td_social_id . '"></div>';
+                    $socialBuffy .= '<span class="td_social_info">' . number_format($social_network_meta['api']) . '</span>';
+                    $socialBuffy .= '<span class="td_social_info td_social_info_name">' . $social_network_meta['text'] . '</span>';
+                    $socialBuffy .= '<span class="td_social_button"><a href="' . $social_network_meta['url'] . '" ' . $td_target . ' >' .
+                        $social_network_meta['button'] . '</a></span>';
+                    $socialBuffy .= '</div>';
+                $socialBuffy .= '</div>';
             }
-        $buffy .= '</div>';
-        $buffy .= '</div> <!-- ./block -->';
+        }
+
+		//if ( $socialEmpty && ( td_util::tdc_is_live_editor_iframe() || td_util::tdc_is_live_editor_ajax()) ) {
+		if ( $socialEmpty && is_user_logged_in() && current_user_can('switch_themes') ) {
+
+			$buffy .= '<div class="' . $this->get_block_classes($additional_classes) . '">';
+	        $buffy .= td_util::get_block_error('Social counter', "Configure this block/widget's settings to get socials");
+	        $buffy .= '</div>';
+
+		} else {
+			$buffy .= '<div class="' . $this->get_block_classes($additional_classes) . '">';
+
+			//get the block js
+			$buffy .= $this->get_block_css();
+
+            // block title wrap
+            $buffy .= '<div class="td-block-title-wrap">';
+                $buffy .= $this->get_block_title();
+                $buffy .= $this->get_pull_down_filter(); //get the sub category filter for this block
+            $buffy .= '</div>';
+
+			$buffy .= '<div class="td-social-list">';
+	        $buffy .= $socialBuffy;
+	        $buffy .= '</div>';
+
+			$buffy .= '</div> <!-- ./block -->';
+		}
 
         return $buffy;
     }
@@ -102,14 +125,14 @@ class td_block_social_counter extends td_block {
                 );
                 break;
 
-            case 'vimeo':
-                return array(
-                    'button' => __td('Like'),
-                    'url' => "http://vimeo.com/$user_id",
-                    'text' => __td('Likes'),
-                    'api' => $td_social_api->get_social_counter($service_id, $user_id, $access_token),
-                );
-                break;
+//            case 'vimeo':
+//                return array(
+//                    'button' => __td('Like'),
+//                    'url' => "http://vimeo.com/$user_id",
+//                    'text' => __td('Likes'),
+//                    'api' => $td_social_api->get_social_counter($service_id, $user_id, $access_token),
+//                );
+//                break;
 
             case 'youtube':
                 return array(

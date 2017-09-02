@@ -18,6 +18,10 @@ global $td_translation_map_user, $td_translation_map;
 
 
 $td_translation_map = array(
+    //top bar
+    'Tel:' => __('Tel:', TD_THEME_NAME),
+    'Email:' => __('Email:', TD_THEME_NAME),
+
     //header search
     'View all results' => __('View all results', TD_THEME_NAME),
     'No results' => __('No results', TD_THEME_NAME),
@@ -281,7 +285,7 @@ if (class_exists('SitePress')) {
 
 } else {
 	//read the user translations
-	$td_translation_map_user = td_util::get_option('td_translation_map_user');
+	$td_translation_map_user = td_options::get_array('td_translation_map_user');
 }
 
 

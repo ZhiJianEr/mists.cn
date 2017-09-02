@@ -11,6 +11,8 @@ class tdc_mapper {
 
 	private static $mapped_block_templates;
 
+	private static $external_shortcodes = array();
+
 
 	/**
 	 * Mapper function - it registers a new shortcode in tagDiv Composer. Please note that you still have to manually register the shortcode
@@ -62,10 +64,20 @@ class tdc_mapper {
 		return self::$mapped_shortcodes;
 	}
 
-
 	static function get_mapped_block_templates() {
 		return self::$mapped_block_templates;
 	}
+
+
+
+	static function set_external_shortcodes( $external_shortcodes ) {
+		self::$external_shortcodes = $external_shortcodes;
+	}
+
+	static function get_external_shortcodes() {
+		return self::$external_shortcodes;
+	}
+
 
 
 

@@ -7,3 +7,4 @@ i.php*
 wp-config.php
 wflogs/
 *.conf
+*-gw2old

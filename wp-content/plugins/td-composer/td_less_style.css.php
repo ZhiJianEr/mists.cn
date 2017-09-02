@@ -30,7 +30,25 @@ $td_less_files = array (
 	'tdc_wp_admin_main' => array (
 		'source' => 'assets/less_wp_admin/wp_admin_main.less',
 		'destination' => 'assets/css/tdc_wp_admin_main.css'
+	),
+
+
+
+	// !!!!
+	// less files for css-live plugin
+
+	// css-live - less file for backend / td-composer plugin
+	'td_live_css_composer' => array (
+		'source' => 'css-live/assets/less/td_live_css_composer.less',
+		'destination' => 'css-live/assets/css/td_live_css_composer.css'
+	),
+
+	// css-live - less file for front-end (when we edit the front page of the site from the top button)
+	'td_live_css_frontend' => array (
+		'source' => 'css-live/assets/less/td_live_css_frontend.less',
+		'destination' => 'css-live/assets/css/td_live_css_frontend.css'
 	)
+
 );
 
 

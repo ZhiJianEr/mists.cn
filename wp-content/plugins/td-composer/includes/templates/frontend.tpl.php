@@ -29,6 +29,33 @@ wp_enqueue_media( array( 'post' => $post->ID ) );
 require_once( ABSPATH . 'wp-admin/admin-header.php' );
 
 $postContent = str_replace( '\'', '\\\'', $post->post_content );
+
+/*
+ * Important!
+ * 'vc_column_text' and 'td_block_with_title' are not self enclosed shortcodes, having their contents inside of them.
+ * So, because this content has \r,\n or \r\n characters inside, it can't be used as it is for window.tdcPostSettings.postContent. It needs to be formatted as wordpress does,
+ * changing these characters to paragraphs.
+ */
+function td_replace_vc_column_text($matches) {
+	return '[vc_column_text' . $matches[1] . ']' . wpautop( htmlentities( preg_replace( '/<\/?p\>/', "\n", $matches[2] ) . "\n", ENT_QUOTES, "UTF-8" ) ) . '[/vc_column_text]';
+	//return '[vc_column_text' . $matches[1] . ']' . wpautop( preg_replace( '/<\/?p\>/', "\n", $matches[2] ) . "\n" ) . '[/vc_column_text]';
+}
+
+if ( shortcode_exists( 'vc_column_text' ) && has_shortcode( $postContent, 'vc_column_text' ) ) {
+	$postContent = preg_replace_callback("/\[vc_column_text(.*)\](.*)\[\/vc_column_text\]/sU", 'td_replace_vc_column_text', $postContent);
+}
+
+function td_replace_td_block_text_with_title($matches) {
+	return '[td_block_text_with_title' . $matches[1] . ']' . wpautop( htmlentities( preg_replace( '/<\/?p\>/', "\n", $matches[2] ) . "\n", ENT_QUOTES, "UTF-8" ) ) . '[/td_block_text_with_title]';
+	//return '[td_block_text_with_title' . $matches[1] . ']' . wpautop( preg_replace( '/<\/?p\>/', "\n", $matches[2] ) . "\n" ) . '[/td_block_text_with_title]';
+}
+
+if ( shortcode_exists( 'td_block_text_with_title' ) && has_shortcode( $postContent, 'td_block_text_with_title' ) ) {
+	$postContent = preg_replace_callback("/\[td_block_text_with_title(.*)\](.*)\[\/td_block_text_with_title\]/sU", 'td_replace_td_block_text_with_title', $postContent);
+}
+
+
+
 $postContent = str_replace( array( "\r\n", "\n", "\r" ), array( "\r\n'+'" ), $postContent );
 
 
@@ -186,15 +213,11 @@ foreach (tdc_mapper::get_mapped_shortcodes() as $mapped_shortcode ) {
 
 		<div class="tdc-empty-sidebar" style="text-align: left">
 			<div class="tdc-start-tips">
-				<span>Welcome!</span>
-				Add or click an element to begin. Thanks for using tagDiv Composer!
+				<img src="<?php echo TDC_URL ?>/assets/images/sidebar/tagdiv-composer.png">
+				<span>Welcome to <br>tagDiv Composer!</span>
+				<p>Get started by adding elements, go to <span>Add Element</span> and begin dragging your items. You can edit by clicking on any element in the preview area.</p>
 			</div>
-
-			<div id="tdc-theme-panel">
-				<?php
-				require_once( plugin_dir_path( __FILE__ ) . '../panel/tdc_header.php');
-				?>
-			</div>
+			<div class="tdc-add-element" title="Add new element in the viewport">Add element</div>
 		</div>
 
 
@@ -230,13 +253,24 @@ foreach (tdc_mapper::get_mapped_shortcodes() as $mapped_shortcode ) {
 
 
 		<div class="tdc-sidebar-bottom">
-			<div class="tdc-sidebar-close" title="Hide sidebar">
+			<div class="tdc-sidebar-bottom-button tdc-sidebar-close" title="Hide sidebar">
 				<span class="tdc-icon-sidebar-close"></span>
 			</div>
-			<div class="tdc-bullet" title="On/Off full viewport">
+			<div class="tdc-sidebar-bottom-button tdc-bullet" title="On/Off full viewport">
 				<span class="tdc-icon-bullet"></span>
 			</div>
 			<div class="tdc-sidebar-info"></div>
+			<div class="tdc-extends">
+
+				<?php
+					// Extensions add button in sidebar (to open content)
+					do_action( 'tdc_extension_sidebar_bottom' );
+				?>
+
+			</div>
+			<div class="tdc-sidebar-bottom-button tdc-main-menu" title="Show site wide settings">
+				<span class="tdc-icon-view"></span>
+			</div>
 		</div>
 
 		<div id="tdc-restore">
@@ -247,7 +281,7 @@ foreach (tdc_mapper::get_mapped_shortcodes() as $mapped_shortcode ) {
 		</div>
 
 		<!-- modal window -->
-		<div class="tdc-sidebar-modal tdc-sidebar-modal-elements">
+		<div class="tdc-sidebar-modal tdc-sidebar-modal-elements" data-button_class="tdc-add-element">
 			<div class="tdc-sidebar-modal-search" title="Search for elements in list">
 				<input type="text" placeholder="Search" name="Search">
 				<span class="tdc-modal-magnifier"></span>
@@ -264,6 +298,11 @@ foreach (tdc_mapper::get_mapped_shortcodes() as $mapped_shortcode ) {
 					$mapped_shortcodes = tdc_mapper::get_mapped_shortcodes();
 
 					foreach ($mapped_shortcodes as &$mapped_shortcode ) {
+
+						if ( 'vc_column' === $mapped_shortcode['base'] ||
+						     'vc_column_inner' === $mapped_shortcode['base'] ) {
+							continue;
+						}
 
 						if ( 'vc_row' === $mapped_shortcode['base'] ||
 						     'vc_row_inner' === $mapped_shortcode['base'] ||
@@ -282,7 +321,6 @@ foreach (tdc_mapper::get_mapped_shortcodes() as $mapped_shortcode ) {
 					}
 
 					usort( $bottom_mapped_shortcodes, 'tdc_sort_name');
-
 
 
 					// Row
@@ -305,8 +343,12 @@ foreach (tdc_mapper::get_mapped_shortcodes() as $mapped_shortcode ) {
 							'<div class="tdc-element-id">' . $top_mapped_shortcodes['vc_empty_space']['name'] . '</div>' .
 						'</div>';
 
+					// Separator
+					echo '<div class="tdc-sidebar-separator">Block shortcodes</div>';
+
 					foreach ($middle_mapped_shortcodes as $mapped_shortcode ) {
-						if ( isset($mapped_shortcode['map_in_visual_composer']) && true === $mapped_shortcode['map_in_visual_composer'] ) {
+						if ( isset($mapped_shortcode['tdc_category']) && 'Blocks' === $mapped_shortcode['tdc_category'] && isset($mapped_shortcode['map_in_td_composer']) && true === $mapped_shortcode['map_in_td_composer'] ) {
+
 							$buffer =
 								'<div class="tdc-sidebar-element tdc-element" data-shortcode-name="' . $mapped_shortcode['base'] . '">' .
 									'<div class="tdc-element-ico tdc-ico-' . $mapped_shortcode['base'] . '"></div>' .
@@ -317,22 +359,91 @@ foreach (tdc_mapper::get_mapped_shortcodes() as $mapped_shortcode ) {
 						}
 					}
 
+					// Separator
+					echo '<div class="tdc-sidebar-separator">Big Grid Shortcodes</div>';
+
+					foreach ($middle_mapped_shortcodes as $mapped_shortcode ) {
+						if ( isset($mapped_shortcode['tdc_category']) && 'Big Grids' === $mapped_shortcode['tdc_category'] && isset($mapped_shortcode['map_in_td_composer']) && true === $mapped_shortcode['map_in_td_composer'] ) {
+
+							if ( isset($mapped_shortcode['tdc_in_row']) && true === $mapped_shortcode['tdc_in_row'] ) {
+
+								$buffer =
+									'<div class="tdc-sidebar-element tdc-sidebar-big-grid tdc-row-temp" data-shortcode-name="' . $mapped_shortcode['base'] . '">' .
+										'<div class="tdc-element-ico tdc-ico-' . $mapped_shortcode['base'] . '"></div>' .
+										'<div class="tdc-element-id">' . $mapped_shortcode['name'] . '</div>' .
+									'</div>';
+
+							} else {
+								$buffer =
+									'<div class="tdc-sidebar-element tdc-element" data-shortcode-name="' . $mapped_shortcode['base'] . '">' .
+										'<div class="tdc-element-ico tdc-ico-' . $mapped_shortcode['base'] . '"></div>' .
+										'<div class="tdc-element-id">' . $mapped_shortcode['name'] . '</div>' .
+									'</div>';
+							}
+
+							echo $buffer;
+						}
+					}
+
+					// Separator
+					echo '<div class="tdc-sidebar-separator">Extended shortcodes</div>';
+
+					// Here will be displayed even the extended shortcodes
 					foreach ($bottom_mapped_shortcodes as $mapped_shortcode ) {
-						if ( isset($mapped_shortcode['map_in_visual_composer']) && true === $mapped_shortcode['map_in_visual_composer'] ) {
+
+						if ( ! isset( $mapped_shortcode['external_shortcode'] ) ) {
+
 							$buffer =
 								'<div class="tdc-sidebar-element tdc-element" data-shortcode-name="' . $mapped_shortcode['base'] . '">' .
-									'<div class="tdc-element-ico tdc-ico-' . $mapped_shortcode['base'] . '"></div>' .
-									'<div class="tdc-element-id">' . $mapped_shortcode['name'] . '</div>' .
+								'<div class="tdc-element-ico tdc-ico-' . $mapped_shortcode['base'] . '"></div>' .
+								'<div class="tdc-element-id">' . $mapped_shortcode['name'] . '</div>' .
 								'</div>';
 
 							echo $buffer;
 						}
 					}
 
+					// Separator
+					echo '<div class="tdc-sidebar-separator">External shortcodes</div>';
+
+					// Here will be displayed even the external shortcodes
+					foreach ($bottom_mapped_shortcodes as $mapped_shortcode ) {
+
+						if ( isset($mapped_shortcode['external_shortcode'] ) && true === $mapped_shortcode['external_shortcode'] ) {
+
+							$buffer =
+								'<div class="tdc-sidebar-element tdc-element" data-shortcode-name="' . $mapped_shortcode['base'] . '">' .
+								'<div class="tdc-element-ico tdc-ico-' . $mapped_shortcode['base'] . '"></div>' .
+								'<div class="tdc-element-id">' . $mapped_shortcode['name'] . '</div>' .
+								'</div>';
+
+							echo $buffer;
+						}
+					}
 					?>
 				</div>
 			</div>
 		</div>
+
+
+		<!-- modal window -->
+		<div class="tdc-sidebar-modal tdc-sidebar-modal-menu" data-button_class="tdc-main-menu">
+			<div class="tdc-sidebar-modal-content">
+				<div id="tdc-theme-panel">
+					<?php
+						require_once( plugin_dir_path( __FILE__ ) . '../panel/tdc_header.php');
+					?>
+				</div>
+			</div>
+		</div>
+
+		<?php
+
+		// Extensions add content
+		do_action( 'tdc_extension_content' );
+
+		?>
+
 	</div>
 
 
@@ -353,22 +464,34 @@ foreach (tdc_mapper::get_mapped_shortcodes() as $mapped_shortcode ) {
 
 	<div id="tdc-menu-settings">
 		<header>
-			<div id="title"></div>
-			<div id="tdc-iframe-close-button"></div>
+			<div class="title"></div>
+			<div class="tdc-iframe-close-button"></div>
 		</header>
 		<div class="content"></div>
 		<footer>
-			<div id="tdc-iframe-apply-button"></div>
-			<div id="tdc-iframe-ok-button"></div>
+			<div class="tdc-iframe-apply-button"></div>
+			<div class="tdc-iframe-ok-button"></div>
 		</footer>
 	</div>
 
 	<div id="tdc-wpeditor">
 		<header>
 			<div id="title">WP Editor</div>
-			<div id="tdc-iframe-close-button"></div>
+			<div class="tdc-iframe-close-button"></div>
 		</header>
 		<div class="content"></div>
+	</div>
+
+	<div id="tdc-page-settings">
+		<header>
+			<div class="title"></div>
+			<div class="tdc-iframe-close-button"></div>
+		</header>
+		<div class="content"></div>
+		<footer>
+			<div class="tdc-iframe-apply-button"></div>
+			<div class="tdc-iframe-ok-button"></div>
+		</footer>
 	</div>
 
 

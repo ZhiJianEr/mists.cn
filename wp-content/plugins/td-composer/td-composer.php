@@ -1,13 +1,12 @@
 <?php
-/**
- * Plugin Name: tagDiv Composer
- * Plugin URI: http://tagdiv.com
- * Description: tagDiv Composer
- * Author: tagDiv
- * Version: 1.0
- * License: -
- * Author URI: http://tagdiv.com
- */
+/*
+	Plugin Name: tagDiv Composer
+	Plugin URI: http://tagdiv.com
+	Description: tagDiv Composer
+	Author: tagDiv
+	Version: 1.0
+	Author URI: http://tagdiv.com
+*/
 
 
 require_once 'td_deploy_mode.php';
@@ -21,7 +20,7 @@ function tdc_plugin_init() {
 
 	// load the plugin
 	require_once "includes/tdc_main.php";
+
+	// register 'css-live' extension
+	require_once "css-live/css-live.php";
 }
-
-
-

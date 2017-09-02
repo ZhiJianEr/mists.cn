@@ -108,12 +108,16 @@ function td_js_generator() {
         (function(){
             var htmlTag = document.getElementsByTagName("html")[0];
 
-            if ( navigator.userAgent.indexOf("MSIE 10.0") > -1 ) {
+	        if ( navigator.userAgent.indexOf("MSIE 10.0") > -1 ) {
                 htmlTag.className += ' ie10';
             }
 
             if ( !!navigator.userAgent.match(/Trident.*rv\:11\./) ) {
                 htmlTag.className += ' ie11';
+            }
+
+	        if ( navigator.userAgent.indexOf("Edge") > -1 ) {
+                htmlTag.className += ' ieEdge';
             }
 
             if ( /(iPad|iPhone|iPod)/g.test(navigator.userAgent) ) {

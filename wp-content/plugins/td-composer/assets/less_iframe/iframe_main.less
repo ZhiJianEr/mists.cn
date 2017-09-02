@@ -23,7 +23,7 @@ html.tdc-active #wpadminbar {
 }
 
 .tdc-elements {
-  min-height: 50px; /* used when only the placeholder is inside and it's hidden */
+  //min-height: 50px; /* used when only the placeholder is inside and it's hidden */
 }
 
 .tdc-elements:empty {
@@ -49,6 +49,25 @@ html.tdc-active #wpadminbar {
     content: '';
     display: block;
     clear: both;
+  }
+}
+
+body.tdc-active-helper {
+  .tdc-element {
+    &:after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+  }
+}
+
+body.tdc-theme-Newspaper.tdc-active-helper {
+  .tdc-element {
+    &:after {
+      height: 48px;
+      margin-top: -48px;
+    }
   }
 }
 
@@ -205,6 +224,7 @@ html.tdc-active #wpadminbar {
   }
 }
 
+
 .tdc-changed {
   opacity: 0.5;
 }
@@ -220,6 +240,7 @@ html.tdc-active #wpadminbar {
   max-height: 50px;
   overflow: hidden;
   cursor: default;
+  margin-bottom: 48px;
 }
 
 .tdc-element-empty:before {
@@ -230,6 +251,14 @@ html.tdc-active #wpadminbar {
   display: block;
   height: 100%;
   color: #666;
+}
+
+.tdc-element-column.tdc-element-empty:before {
+  content: 'EMPTY COLUMN' !important;
+}
+
+.tdc-element-inner-column.tdc-element-empty:before {
+  content: 'EMPTY INNER COLUMN' !important;
 }
 
 .tdc-inner-column .tdc-elements > .tdc-element-empty {
@@ -337,7 +366,11 @@ html.tdc-active #wpadminbar {
   width: 88px;
   height: 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.3);
+
+  .tdc-mask-arrow-vertical {
+    background-position: -36px -159px;
   }
+}
 
 #tdc-mask-inner-column {
   background-color: #363636;
@@ -368,7 +401,7 @@ html.tdc-active #wpadminbar {
 
 .td_block_homepage_full_1 {
   height: 50px;
-  border: 1px solid #ec6432;
+  border: 1px solid #eeecf0;
 
   &:after {
     text-align: center;
@@ -459,11 +492,6 @@ html.tdc-active #wpadminbar {
   }
 }
 
-.tdc-external-shortcode {
-  height: 50px;
-  border: 1px solid #ec6432;
-}
-
 .tdc-mask-clone {
   background: url('../images/sidebar/spritesheet.png');
   background-repeat: no-repeat;
@@ -494,21 +522,26 @@ html.tdc-active #wpadminbar {
   .stitches-sprite(-89px, -65px, 14px, 14px);
 }
 
+@keyframes tdc-recycle-pulse {
+	0% { background-color: #e10018; }
+	50% { background-color: #53000b; }
+	100% { background-color: #e10018; }
+}
+
 #tdc-recycle {
   position: fixed;
   right: 20px;
   bottom: 20px;
   margin-left: auto;
   margin-right: auto;
-  color: #888;
-  background-color: #eaeaea;
-  border: 1px dashed #bbb;
+  color: #ffffff;
   width: 258px;
   height: 90px;
   opacity: 0;
   pointer-events: none;
   z-index: 10000;
-  .transition(all 0.4s ease);
+  animation: tdc-recycle-pulse 2s infinite;
+  .transition(opacity 0.4s ease);
 
   .tdc-delete-text:first-child {
     &:before {
@@ -524,15 +557,16 @@ html.tdc-active #wpadminbar {
 
 #tdc-recycle.active {
   color: #fff;
-  background-color: #e1624f;
-  border: 1px solid #e1624f;
+  animation: tdc-recycle-pulse 1s infinite !important;
 
   .tdc-delete-text:first-child {
     &:before {
-      content: 'Drop here to';
+      content: 'JUST DROP!';
     }
   }
-
+  span {
+    display: none;
+  }
 }
 
 .tdc-delete-text {
@@ -561,14 +595,33 @@ html.tdc-active #wpadminbar {
   outline: 2px dotted #e8e8e8;
 }
 
+// no posts
+.tdc-no-posts {
+  .td_block_inner {
+    margin-right: 0;
+
+    &:after {
+      content: 'No posts' !important;
+      display: block !important;
+      font-size: 13px;
+      font-weight: normal;
+      text-align: left;
+      padding: 20px;
+      border: 1px solid #eeecf0;
+      color: black;
+    }
+  }
+}
+
 /*
 
     general ad titles on TDC
 
 */
 .tdc-placeholder-title {
+  font-family: @font1;
   height: 50px;
-  border: 1px solid #ec6432;
+  border: 1px solid #ebebeb;
   text-align: center;
   font-size: 12px;
   line-height: 50px;
@@ -576,6 +629,7 @@ html.tdc-active #wpadminbar {
   color: #666;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
 
   &:before {
     content: 'Select a spot ID';
@@ -608,7 +662,6 @@ html.tdc-active #wpadminbar {
   }
 
   .tdc-placeholder-title {
-    border-color: #ebebeb;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -635,9 +688,71 @@ html.tdc-active #wpadminbar {
   }
 }
 
-// sidebar ad
-.td-spot-id-sidebar .tdc-placeholder-title:before {
-  content: 'Sidebar ad';
+// custom ads
+[class*="td-spot-id-custom_ad"] {
+  .tdc-placeholder-title {
+    border-color: #ebebeb;
+    width: 728px;
+    height: 90px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+
+    /* responsive portrait tablet */
+    @media (min-width: 768px) and (max-width: 1018px) {
+      width: 468px;
+      height: 60px;
+    }
+    /* responsive portrait phone */
+    @media (max-width: 767px) {
+      position: relative;
+      width: 320px;
+      height: 50px;
+    }
+
+    &:before {
+      position: absolute;
+      top: 50%;
+      .transform(translateY(-50%));
+      margin: auto;
+      display: table;
+      width: 100%;
+    }
+  }
+  .td-adspot-title {
+    display: block;
+  }
+}
+
+// sidebar ad + custom ad 1 column
+.td-spot-id-sidebar,
+.td-pb-span4 [class*="td-spot-id-custom_ad"] {
+  .tdc-placeholder-title {
+    border-color: #ebebeb;
+    width: 300px;
+    height: 250px;
+    margin-left: auto;
+    margin-right: auto;
+
+    /* responsive portrait tablet */
+    @media (min-width: 768px) and (max-width: 1018px) {
+      width: 200px;
+      height: 200px;
+    }
+
+    &:before {
+      content: 'Sidebar ad';
+      position: absolute;
+      top: 50%;
+      .transform(translateY(-50%));
+      margin: auto;
+      display: table;
+      width: 100%;
+    }
+  }
+  .td-adspot-title {
+    display: block;
+  }
 }
 
 // footer ad
@@ -684,26 +799,56 @@ html.tdc-active #wpadminbar {
 
 // custom ad
 .td-spot-id-custom_ad_1 .tdc-placeholder-title:before {
-  content: 'Custom ad 1';
+  content: 'Custom ad 1' !important;
 }
 .td-spot-id-custom_ad_2 .tdc-placeholder-title:before {
-  content: 'Custom ad 2';
+  content: 'Custom ad 2' !important;
 }
 .td-spot-id-custom_ad_3 .tdc-placeholder-title:before {
-  content: 'Custom ad 3';
+  content: 'Custom ad 3' !important;
 }
 .td-spot-id-custom_ad_4 .tdc-placeholder-title:before {
-  content: 'Custom ad 4';
+  content: 'Custom ad 4' !important;
 }
 .td-spot-id-custom_ad_5 .tdc-placeholder-title:before {
-  content: 'Custom ad 5';
+  content: 'Custom ad 5' !important;
 }
 
-// List menu
-.td_block_list_menu .tdc-placeholder-title:before {
-  content: 'Select a menu';
-}
 
 .tdc-inactive-menu {
   pointer-events: none;
+}
+
+
+.td-header-wrap .td_block_wrap {
+  margin-bottom: 0 !important;
+}
+
+.vc_separator.td_block_wrap {
+  margin-bottom: 38px;
+  padding-bottom: 10px;
+}
+
+// error message that shows up when a requiered setting is missing from the block (weather widget / video playlist etc)
+.tdc-missing-external-shortcode,
+.td-block-missing-settings,
+.tdc_external_shortcode {
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 11px;
+  font-weight: normal;
+  text-align: left;
+  padding: 20px;
+  border: 1px solid #eeecf0;
+  color: black;
+
+  span {
+    background-color: #ec4d4d;
+    color: white;
+    font-weight: bold;
+    padding: 3px 8px 4px;
+    font-size: 10px;
+    position: relative;
+    top: -1px;
+    margin-right: 10px;
+  }
 }

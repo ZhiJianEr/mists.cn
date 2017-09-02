@@ -29,6 +29,7 @@ class tdc_state {
 
 	private static $customized_settings;
 	private static $customized_menu_settings;
+	private static $customized_page_settings;
 
 
 	/**
@@ -130,6 +131,11 @@ class tdc_state {
 					}
 				}
 			}
+
+			if ( isset( self::$customized_settings['page_settings'] ) ) {
+				$page_settings = self::$customized_settings[ 'page_settings' ];
+				self::$customized_page_settings = json_decode( $page_settings, true );
+			}
 		}
 	}
 
@@ -144,6 +150,13 @@ class tdc_state {
 			} else {
 				return self::$customized_menu_settings;
 			}
+		}
+		return false;
+	}
+
+	public static function get_customized_page_settings() {
+		if ( isset( self::$customized_page_settings )  ) {
+			return self::$customized_page_settings;
 		}
 		return false;
 	}

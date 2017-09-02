@@ -92,7 +92,7 @@ class td_social_api {
                 } else {
                     //new api - v2.6 and newer, likes was replaced with fan_count
                     //we have to make 2 separate requests - if you call for both fields (likes,fan_count) you receive an error on older api versions and no result is returned
-                    $td_data = @$this->get_json( "https://graph.facebook.com/v2.0/$user_id?access_token=$access_token&fields=fan_count" );
+                    $td_data = @$this->get_json( "https://graph.facebook.com/v2.9/$user_id?access_token=$access_token&fields=fan_count" );
                     if (!empty($td_data['fan_count'])) {
                         $buffy_array = (int)$td_data['fan_count'];
                     }
@@ -152,16 +152,15 @@ class td_social_api {
 
                 break;
 
-            case 'vimeo':
-
-                $td_data = td_remote_http::get_page("http://vimeo.com/$user_id", __CLASS__);
-                $pattern = "/<b class=\"stat_list_count\">(.*?)<\/b>(\s+)<span class=\"stat_list_label\">likes<\/span>/";
-                preg_match($pattern, $td_data, $matches);
-                if (!empty($matches[1])) {
-                    $buffy_array = (int) $matches[1];
-                }
-
-                break;
+//            case 'vimeo':
+//                $td_data = td_remote_http::get_page("http://vimeo.com/$user_id", __CLASS__);
+//                $pattern = "/<b class=\"stat_list_count\">(.*?)<\/b>(\s+)<span class=\"stat_list_label\">likes<\/span>/";
+//                preg_match($pattern, $td_data, $matches);
+//                if (!empty($matches[1])) {
+//                    $buffy_array = (int) $matches[1];
+//                }
+//
+//                break;
 
             case 'youtube':
 

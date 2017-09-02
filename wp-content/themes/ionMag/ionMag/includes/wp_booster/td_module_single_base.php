@@ -16,7 +16,7 @@ class td_module_single_base extends td_module {
         parent::__construct($post);
 
         //read post settings
-        $this->td_post_theme_settings = get_post_meta($post->ID, 'td_post_theme_settings', true);
+        $this->td_post_theme_settings = td_util::get_post_meta_array($post->ID, 'td_post_theme_settings');
 
         $this->is_single = is_single();
     }
@@ -65,8 +65,16 @@ class td_module_single_base extends td_module {
     //$show_stars_on_review - not used
     function get_author() {
         $buffy = '';
+
+        // used in ionMag to hide the date "." when the post date & comment count are off
+        // it does nothing on newspaper & newsmag
+        $post_author_no_dot = '';
+        if ( td_util::get_option('tds_p_show_date') == 'hide' and td_util::get_option('tds_p_show_comments') == 'hide' ) {
+            $post_author_no_dot = ' td-post-author-no-dot';
+        }
+
         if (td_util::get_option('tds_p_show_author_name') != 'hide') {
-            $buffy .= '<div class="td-post-author-name"><div class="td-author-by">' . __td('By', TD_THEME_NAME) . '</div> ';
+            $buffy .= '<div class="td-post-author-name' . $post_author_no_dot . '"><div class="td-author-by">' . __td('By', TD_THEME_NAME) . '</div> ';
             $buffy .= '<a href="' . get_author_posts_url($this->post->post_author) . '">' . get_the_author_meta('display_name', $this->post->post_author) . '</a>' ;
 
             if (td_util::get_option('tds_p_show_author_name') != 'hide' and td_util::get_option('tds_p_show_date') != 'hide') {
@@ -108,7 +116,7 @@ class td_module_single_base extends td_module {
         //handle video post format
         if (get_post_format($this->post->ID) == 'video') {
             //if it's a video post...
-            $td_post_video = get_post_meta($this->post->ID, 'td_post_video', true);
+            $td_post_video = td_util::get_post_meta_array($this->post->ID, 'td_post_video');
 
             //render the video if the post has a video in the featured video section of the post
             if (!empty($td_post_video['td_video'])) {
@@ -276,6 +284,13 @@ class td_module_single_base extends td_module {
             $visibility_class = ' td-visibility-hidden';
         }
 
+        // used in ionMag to hide the date "." when the post comment count is off
+        // it does nothing on newspaper & newsmag
+        $td_post_date_no_dot = '';
+        if ( td_util::get_option('tds_p_show_comments') == 'hide' ) {
+            $td_post_date_no_dot = ' td-post-date-no-dot';
+        }
+
         $buffy = '';
         if ($this->is_review and $show_stars_on_review === true) {
             //if review show stars
@@ -286,7 +301,7 @@ class td_module_single_base extends td_module {
         } else {
             if (td_util::get_option('tds_p_show_date') != 'hide') {
                 $td_article_date_unix = get_the_time('U', $this->post->ID);
-                $buffy .= '<span class="td-post-date">';
+                $buffy .= '<span class="td-post-date' . $td_post_date_no_dot . '">';
                 $buffy .= '<time class="entry-date updated td-module-date' . $visibility_class . '" datetime="' . date(DATE_W3C, $td_article_date_unix) . '" >' . get_the_time(get_option('date_format'), $this->post->ID) . '</time>';
                 $buffy .= '</span>';
             }
@@ -350,7 +365,7 @@ class td_module_single_base extends td_module {
          * @see td_autoload_classes::loading_classes
          */
         //$td_smart_list = get_post_meta($this->post->ID, 'td_smart_list', true);
-	    $td_post_theme_settings = get_post_meta($this->post->ID, 'td_post_theme_settings', true);
+	    $td_post_theme_settings = td_util::get_post_meta_array($this->post->ID, 'td_post_theme_settings');
         if (!empty($td_post_theme_settings['smart_list_template'])) {
 
             $td_smart_list_class = $td_post_theme_settings['smart_list_template'];

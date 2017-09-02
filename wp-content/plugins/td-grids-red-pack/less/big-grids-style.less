@@ -1,0 +1,68 @@
+/*
+  Style 1 - Center
+*/
+
+
+/*
+  Style 2 - Left
+*/
+.td-grid-style-2 {
+  /*
+      General
+  */
+  .td-big-grid-post {
+    text-align: left;
+  }
+
+  /*
+      Big grids custom css
+  */
+  // Font size 13
+  .td-mx-13 {
+    // meta container
+    .td-meta-info-container {
+      padding-bottom: 10px;
+
+      /* responsive portrait phone */
+      @media (max-width: @responsive_p_phone_max) {
+        padding: 0 13px 11px;
+      }
+    }
+  }
+
+
+  // Font size 17
+  .td-mx-17 {
+    // meta container
+    .td-meta-info-container {
+      //padding-bottom: 10px;
+      padding: 0 20px 18px;
+
+      /* responsive portrait tablet */
+      @media (min-width: @responsive_p_tablet_min) and (max-width: @responsive_p_tablet_max) {
+        padding: 0 15px 13px;
+      }
+      /* responsive portrait phone */
+      @media (max-width: @responsive_p_phone_max) {
+        padding: 0 13px 11px;
+      }
+    }
+  }
+
+  // Font size 19
+  .td-mx-19 {
+    // meta container
+    .td-meta-info-container {
+
+    }
+  }
+
+
+  /*
+      Individual Big Grids
+  */
+  // Big grid 2
+  &.td_block_big_grid_2 {
+
+  }
+}

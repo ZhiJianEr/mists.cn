@@ -6,9 +6,6 @@
 do_action('td_wp_booster_before');  //@todo is probably not used by anyone
 
 
-if (TD_DEPLOY_MODE == 'dev') {
-	require_once('external/kint/Kint.class.php');
-}
 
 // theme utility files
 require_once('td_global.php');
@@ -99,12 +96,27 @@ add_action('wp_footer', array('td_more_article_box', 'on_wp_footer_render_box'))
 
 
 /* ----------------------------------------------------------------------------
+ * td_admin_popup
+ */
+//execute only if the admin_go_premium_popup flag is enabled and is not premium version of the ionmag theme
+if (td_api_features::is_enabled('has_premium_version') && TD_DEPLOY_IS_PREMIUM === false) {
+	td_api_autoload::add('td_admin_popup', td_global::$get_template_directory . '/includes/wp_booster/td_admin_popup.php');
+	add_action('admin_footer', array('td_admin_popup', 'on_admin_footer'));
+}
+
+
+/* ----------------------------------------------------------------------------
  * PageView support
  */
 td_api_autoload::add('td_page_views', td_global::$get_template_directory . '/includes/wp_booster/td_page_views.php');
 add_filter('manage_posts_columns', array('td_page_views', 'on_manage_posts_columns_views'));
 add_action('manage_posts_custom_column', array('td_page_views', 'on_manage_posts_custom_column'), 5, 2);
 
+
+/* ----------------------------------------------------------------------------
+ * JSON LD Breadcrumbs
+ */
+add_action('wp_head', array('td_page_generator', 'get_breadcrumbs_json_ld'), 45);
 
 
 /* ----------------------------------------------------------------------------
@@ -156,6 +168,18 @@ add_action('wp_ajax_td_ajax_get_views',        array('td_ajax', 'on_ajax_get_vie
 add_action('wp_ajax_td_ajax_new_sidebar', array('td_ajax', 'on_ajax_new_sidebar'));        // ajax: admin panel - new sidebar #sec
 add_action('wp_ajax_td_ajax_delete_sidebar', array('td_ajax', 'on_ajax_delete_sidebar'));  // ajax: admin panel - delete sidebar #sec
 
+//ajax: translation
+add_action('wp_ajax_td_ajax_share_translation', array('td_ajax', 'on_ajax_share_translation')); // ajax: share translations
+add_action('wp_ajax_td_ajax_get_translation', array('td_ajax', 'on_ajax_get_translation')); // ajax: get translations
+
+//ajax: activation
+add_action('wp_ajax_td_ajax_check_envato_code', array('td_ajax', 'on_ajax_check_envato_code'));
+add_action('wp_ajax_td_ajax_register_forum_user', array('td_ajax', 'on_ajax_register_forum_user'));
+add_action('wp_ajax_td_ajax_manual_activation', array('td_ajax', 'on_ajax_manual_activation'));
+
+//ajax: db check
+add_action('wp_ajax_td_ajax_db_check', array('td_ajax', 'on_ajax_db_check'));
+
 
 
 //// @todo MUST
@@ -183,6 +207,7 @@ add_theme_support('post-formats', array('video'));
 add_theme_support('automatic-feed-links');
 add_theme_support('html5', array('comment-list', 'comment-form', 'search-form', 'gallery', 'caption'));
 add_theme_support('woocommerce');
+add_theme_support('bbpress');
 
 
 /*
@@ -209,8 +234,12 @@ function load_front_css() {
 		wp_enqueue_style('td-theme', td_global::$get_template_directory_uri . '/td_less_style.css.php?part=style.css_v2',  '', TD_THEME_VERSION, 'all' );
 
 		// load WooCommerce LESS only when needed
-		if (td_global::$is_woocommerce_installed === true) {
+		if (td_global::$is_woocommerce_installed === true ) {
 			wp_enqueue_style('td-theme-woo', td_global::$get_template_directory_uri . '/td_less_style.css.php?part=woocommerce', '', TD_THEME_VERSION, 'all');
+		}
+		// load Bbpress LESS only when needed
+		if (td_global::$is_bbpress_installed === true ) {
+			wp_enqueue_style('td-theme-bbpress', td_global::$get_template_directory_uri . '/td_less_style.css.php?part=bbpress', '', TD_THEME_VERSION, 'all');
 		}
 
 		if ($demo_id !== false and td_global::$demo_list[$demo_id]['uses_custom_style_css'] === true) {
@@ -220,8 +249,13 @@ function load_front_css() {
 		wp_enqueue_style('td-theme', get_stylesheet_uri(), '', TD_THEME_VERSION, 'all' );
 
 		// load the WooCommerce CSS only when needed
-		if (td_global::$is_woocommerce_installed === true) {
+		if (td_global::$is_woocommerce_installed === true ) {
 			wp_enqueue_style('td-theme-woo', td_global::$get_template_directory_uri . '/style-woocommerce.css',  '', TD_THEME_VERSION, 'all' );
+		}
+
+		// load the Bbpress CSS only when needed
+		if (td_global::$is_bbpress_installed === true ) {
+			wp_enqueue_style('td-theme-bbpress', td_global::$get_template_directory_uri . '/style-bbpress.css',  '', TD_THEME_VERSION, 'all' );
 		}
 
 		// If we have a DEMO installed - load the demo CSS
@@ -279,7 +313,7 @@ add_action('wp_head', 'td_include_user_compiled_css', 10);
 add_action('wp_enqueue_scripts', 'td_load_css_fonts');
 function td_load_css_fonts() {
 
-	$cur_td_fonts = td_util::get_option('td_fonts'); // get the google fonts used by user
+	$cur_td_fonts = td_options::get_array('td_fonts'); // get the google fonts used by user
 
 	$unique_google_fonts_ids = array();
 
@@ -307,7 +341,7 @@ function td_load_css_fonts() {
 	 * this section will appear in the header of the source of the page
 	 */
 	if(!empty($td_fonts_css_files)) {
-		wp_enqueue_style('google-fonts-style', td_global::$http_or_https . $td_fonts_css_files);
+		wp_enqueue_style( 'google-fonts-style', td_global::$http_or_https . $td_fonts_css_files, array(), TD_THEME_VERSION );
 	}
 }
 
@@ -326,30 +360,22 @@ function load_front_js() {
 		$td_deploy_mode = 'demo';
 	}
 
+	if ($td_deploy_mode == 'dev') {
+        // dev version - load each file separately
+        $last_js_file_id = '';
+        foreach (td_global::$js_files as $js_file_id => $js_file) {
+            if ($last_js_file_id == '') {
+                wp_enqueue_script($js_file_id, td_global::$get_template_directory_uri . $js_file, array('jquery'), TD_THEME_VERSION, true); //first, load it with jQuery dependency
+            } else {
+                wp_enqueue_script($js_file_id, td_global::$get_template_directory_uri . $js_file, array($last_js_file_id), TD_THEME_VERSION, true);  //not first - load with the last file dependency
+            }
+            $last_js_file_id = $js_file_id;
+        }
+    } else {
+        wp_enqueue_script('td-site-min', td_global::$get_template_directory_uri . '/js/tagdiv_theme.min.js', array('jquery'), TD_THEME_VERSION, true);
+    }
 
-	switch ($td_deploy_mode) {
-		default: //deploy
-			wp_enqueue_script('td-site', td_global::$get_template_directory_uri . '/js/tagdiv_theme.js', array('jquery'), TD_THEME_VERSION, true);
-			break;
 
-		case 'demo':
-			wp_enqueue_script('td-site-min', td_global::$get_template_directory_uri . '/js/tagdiv_theme.min.js', array('jquery'), TD_THEME_VERSION, true);
-			break;
-
-		case 'dev':
-			// dev version - load each file separately
-			$last_js_file_id = '';
-			foreach (td_global::$js_files as $js_file_id => $js_file) {
-				if ($last_js_file_id == '') {
-					wp_enqueue_script($js_file_id, td_global::$get_template_directory_uri . $js_file, array('jquery'), TD_THEME_VERSION, true); //first, load it with jQuery dependency
-				} else {
-					wp_enqueue_script($js_file_id, td_global::$get_template_directory_uri . $js_file, array($last_js_file_id), TD_THEME_VERSION, true);  //not first - load with the last file dependency
-				}
-				$last_js_file_id = $js_file_id;
-			}
-			break;
-
-	}
 
 	//add the comments reply to script on single pages
 	if (is_singular()) {
@@ -407,34 +433,54 @@ add_action('admin_print_styles-widgets.php', 'td_on_admin_print_styles_farbtasti
 add_action('admin_enqueue_scripts', 'load_wp_admin_js');
 function load_wp_admin_js() {
 
+    if (TD_DEPLOY_MODE == 'dev') {
+        // dev version - load each file separately
+        $last_js_file_id = '';
+        foreach (td_global::$js_files_for_wp_admin as $js_file_id => $js_file_params) {
+            if ($last_js_file_id == '') {
+                wp_enqueue_script($js_file_id, td_global::$get_template_directory_uri . $js_file_params, array('jquery', 'wp-color-picker'), TD_THEME_VERSION, false); //first, load it with jQuery dependency
+            } else {
+                wp_enqueue_script($js_file_id, td_global::$get_template_directory_uri . $js_file_params, array($last_js_file_id), TD_THEME_VERSION, false);  //not first - load with the last file dependency
+            }
+            $last_js_file_id = $js_file_id;
+        }
+    } else {
+        wp_enqueue_script('td-wp-admin-js', td_global::$get_template_directory_uri . '/js/td_wp_admin.min.js', array('jquery', 'wp-color-picker'), TD_THEME_VERSION, false);
+    }
 
-	$current_page_slug = '';
-	if (isset($_GET['page'])) {
-		$current_page_slug = $_GET['page'];
-	}
 
 
-	// dev version - load each file separately
-	$last_js_file_id = '';
-	foreach (td_global::$js_files_for_wp_admin as $js_file_id => $js_file_params) {
+    if (isset($_GET['page']) && $_GET['page'] === 'td_theme_panel') {
+        $last_js_file_id = '';
+        foreach (td_global::$js_files_for_td_theme_panel as $js_file_id => $js_file_params) {
+            if ($last_js_file_id == '') {
+                wp_enqueue_script($js_file_id, td_global::$get_template_directory_uri . $js_file_params, array('jquery', 'wp-color-picker'), TD_THEME_VERSION, false); //first, load it with jQuery dependency
+            } else {
+                wp_enqueue_script($js_file_id, td_global::$get_template_directory_uri . $js_file_params, array($last_js_file_id), TD_THEME_VERSION, false);  //not first - load with the last file dependency
+            }
+            $last_js_file_id = $js_file_id;
+        }
+    }
 
-		// skip a file if it has custom page_slugs
-		if (!empty($js_file_params['show_only_on_page_slugs']) and !in_array($current_page_slug, $js_file_params['show_only_on_page_slugs'])) {
-			continue;
-		}
-
-		if ($last_js_file_id == '') {
-			wp_enqueue_script($js_file_id, td_global::$get_template_directory_uri . $js_file_params['url'], array('jquery', 'wp-color-picker'), TD_THEME_VERSION, false); //first, load it with jQuery dependency
-		} else {
-			wp_enqueue_script($js_file_id, td_global::$get_template_directory_uri . $js_file_params['url'], array($last_js_file_id), TD_THEME_VERSION, false);  //not first - load with the last file dependency
-		}
-		$last_js_file_id = $js_file_id;
-	}
 
 	add_thickbox();
-
 }
 
+
+/*
+ * set media-upload is loaded js global
+ * used by tdConfirm.js
+ */
+add_action('admin_print_footer_scripts', 'check_if_media_uploads_is_loaded', 9999);
+function check_if_media_uploads_is_loaded() {
+    $wp_scripts = wp_scripts();
+    $media_upload = $wp_scripts->query('media-upload', 'done');
+    if ($media_upload === true) {
+        //td_js_buffer::add_to_wp_admin_footer('var td_media_upload_loaded = true;');
+        //echo '<script>var td_media_upload_loaded = true;</script>';
+        echo '<script>tdConfirm.mediaUploadLoaded = true;</script>';
+    }
+}
 
 /* ----------------------------------------------------------------------------
  * Prepare the head canonical links on smart lists and pages with pagination.
@@ -446,7 +492,7 @@ function load_wp_admin_js() {
 function td_on_wp_head_canonical(){
 
 	global $post;
-	$td_smart_list = get_post_meta($post->ID, 'td_post_theme_settings', true);
+	$td_smart_list = td_util::get_post_meta_array($post->ID, 'td_post_theme_settings');
 
 	/** ----------------------------------------------------------------------------
 	 * Smart list support. class_exists and new object WORK VIA AUTOLOAD
@@ -535,7 +581,7 @@ function td_on_wp_head_canonical(){
 
 		global $wp_query;
 
-		$td_homepage_loop = get_post_meta($post->ID, 'td_homepage_loop', true);
+		$td_homepage_loop = td_util::get_post_meta_array($post->ID, 'td_homepage_loop');
 		query_posts(td_data_source::metabox_to_args($td_homepage_loop, $paged));
 
 		$max_page = $wp_query->max_num_pages;
@@ -580,12 +626,14 @@ function hook_wp_head() {
 		}
 
 		// show author meta tag on single pages if it's not disabled from theme's panel
-		if (td_util::get_option('tds_p_show_author_name') != 'hide') {
-			$td_post_author = get_the_author_meta('display_name', $post->post_author);
-			if ($td_post_author) {
-				echo '<meta name="author" content="' . $td_post_author . '">' . "\n";
-			}
-		}
+		// this is not used by facebook anymore and it generates error in facebook's sharing debugger
+		// removed the comment if needed
+//		if (td_util::get_option('tds_p_show_author_name') != 'hide') {
+//			$td_post_author = get_the_author_meta('display_name', $post->post_author);
+//			if ($td_post_author) {
+//				echo '<meta name="author" content="' . $td_post_author . '">' . "\n";
+//			}
+//		}
 	}
 
 	// fav icon support
@@ -749,7 +797,7 @@ function td_wpseo_title($seo_title) {
 	if (is_singular('post')) {
 		global $post;
 
-		$td_post_theme_settings = get_post_meta($post->ID, 'td_post_theme_settings', true);
+		$td_post_theme_settings = td_util::get_post_meta_array($post->ID, 'td_post_theme_settings');
 		if (is_array($td_post_theme_settings) && array_key_exists('smart_list_template', $td_post_theme_settings)) {
 			$is_smart_list = true;
 		}
@@ -1113,11 +1161,22 @@ function td_custom_menu() {
 		'id' => 'td-menu1'
 	));
 
-	$wp_admin_bar->add_menu( array(
-		'id'   => 'our_support_item',
-		'meta' => array('title' => 'Theme support', 'target' => '_blank'),
-		'title' => 'Theme support',
-		'href' => 'http://forum.tagdiv.com' ));
+	if (TD_THEME_NAME == "ionMag") {
+        $wp_admin_bar->add_menu( array(
+                'id'   => 'our_support_item',
+                'meta' => array('title' => 'Theme support', 'target' => '_blank'),
+                'title' => 'Theme support',
+                'href' => 'https://www.wpion.com/members/' )
+        );
+    } else {
+        $wp_admin_bar->add_menu( array(
+                'id'   => 'our_support_item',
+                'meta' => array('title' => 'Theme support', 'target' => '_blank'),
+                'title' => 'Theme support',
+                'href' => 'http://forum.tagdiv.com' )
+        );
+    }
+
 
 }
 
@@ -1295,9 +1354,9 @@ function td_vc_init() {
 		vc_set_as_theme(true);
 	}
 
-	if (function_exists('wpb_map')) {
+	if (function_exists('vc_map')) {
 		//map all of our blocks in page builder
-		td_global_blocks::wpb_map_all();
+		td_global_blocks::td_vc_map_all();
 	}
 
 	if (function_exists('vc_disable_frontend')) {
@@ -1629,6 +1688,13 @@ function td_gallery_shortcode($output = '', $atts, $content = false) {
 						$thumbnail_type = 'td_1021x580';
 						$thumbnail_width = '1021';
 						break;
+
+					case 'ionMag' :
+						$td_temp_image_url = wp_get_attachment_image_src($image_id, 'td_980x580');       //980x580 images - for big slide
+						//change image type and width - used to retrieve retina image
+						$thumbnail_type = 'td_980x580';
+						$thumbnail_width = '980';
+						break;
 				}
 			} else {
 				$td_temp_image_url = wp_get_attachment_image_src($image_id, 'td_0x420');       //0x420 image sizes - for big slide
@@ -1750,7 +1816,7 @@ function td_gallery_shortcode($output = '', $atts, $content = false) {
                     jQuery(document).ready(function() {
                         //magnific popup
                         jQuery("#' . $gallery_slider_unique_id . ' .td-slide-popup-gallery").magnificPopup({
-                            delegate: "a",
+                            delegate: "a.slide-gallery-image-link",
                             type: "image",
                             tLoading: "Loading image #%curr%...",
                             mainClass: "mfp-img-mobile",
@@ -1935,7 +2001,7 @@ function td_add_single_template_class($classes) {
 		global $post;
 
 		$active_single_template = '';
-		$td_post_theme_settings = get_post_meta($post->ID, 'td_post_theme_settings', true);
+		$td_post_theme_settings = td_util::get_post_meta_array($post->ID, 'td_post_theme_settings');
 
 		if (!empty($td_post_theme_settings['td_post_template'])) {
 			// we have a post template set in the post
@@ -2111,8 +2177,21 @@ function td_init_booster() {
 	global $content_width;
 
 	// content width - this is overwritten in post
-	if (!isset($content_width)) {
-		$content_width = 640;
+	if ( !isset($content_width) ) {
+
+		switch (TD_THEME_NAME) {
+			case 'Newspaper' :
+				$content_width = 696;
+				break;
+
+			case 'Newsmag' :
+				$content_width = 640;
+				break;
+
+			case 'ionMag' :
+				$content_width = 640;
+				break;
+		}
 	}
 
 	/* ----------------------------------------------------------------------------
@@ -2133,27 +2212,27 @@ function td_init_booster() {
 	 * Add default render function for 'td_block_social_counter' shortcode.
 	 * It's overwritten by the social counter plugin.
 	 */
-	add_shortcode('td_block_social_counter', 'td_block_social_counter_func');
-	function td_block_social_counter_func($atts) {
-		if ( current_user_can( 'administrator' ) ) {
-			$buffer = '';
-			$buffer .= '<style>
-				.td-block-social-counter {
-				  border: 1px solid red;
-				  min-height: 50px;
-				  line-height: 50px;
-				  vertical-align: middle;
-				  text-align: center;
-				}
-				.td-block-social-counter:before {
-				  content: "Activate Social Counter plugin";
-				}
-				</style>';
-			$buffer .= '<div class="td-block-social-counter"></div>';
-			return $buffer;
-		}
-		return '';
-	}
+//	add_shortcode('td_block_social_counter', 'td_block_social_counter_func');
+//	function td_block_social_counter_func($atts) {
+//		if ( current_user_can( 'administrator' ) ) {
+//			$buffer = '';
+//			$buffer .= '<style>
+//				.td-block-social-counter {
+//				  border: 1px solid red;
+//				  min-height: 50px;
+//				  line-height: 50px;
+//				  vertical-align: middle;
+//				  text-align: center;
+//				}
+//				.td-block-social-counter:before {
+//				  content: "Activate Social Counter plugin";
+//				}
+//				</style>';
+//			$buffer .= '<div class="td-block-social-counter"></div>';
+//			return $buffer;
+//		}
+//		return '';
+//	}
 
 
 
@@ -2205,7 +2284,7 @@ function td_init_booster() {
 	));
 
 	//get our custom dynamic sidebars
-	$currentSidebars = td_util::get_option('sidebars');
+	$currentSidebars = td_options::get_array('sidebars');
 
 	//if we have user made sidebars, register them in wp
 	if (!empty($currentSidebars)) {
@@ -2223,8 +2302,8 @@ function td_init_booster() {
 
 }
 
-
-
+//@td_js
+require_once('td_js.php');
 
 /*  ----------------------------------------------------------------------------
     check to see if we are on the backend
@@ -2374,7 +2453,7 @@ function td_template_include_filter( $wordpress_template_path ) {
 		$single_template_id = td_util::get_option('td_default_site_post_template');
 
 		// check if we have a specific template
-		$td_post_theme_settings = get_post_meta($post->ID, 'td_post_theme_settings', true);
+		$td_post_theme_settings = td_util::get_post_meta_array($post->ID, 'td_post_theme_settings');
 		if (!empty($td_post_theme_settings['td_post_template'])) {
 			$single_template_id = $td_post_theme_settings['td_post_template'];
 		}
@@ -2444,6 +2523,9 @@ function td_customize_js() {
 
 add_filter('admin_body_class', 'td_on_admin_body_class' );
 function td_on_admin_body_class( $classes ) {
+    if (td_api_features::is_enabled('has_premium_version') && TD_DEPLOY_IS_PREMIUM === false) {
+        $classes .= ' td-theme-panel-ionMag-free ';
+    }
 	$classes .= ' td-theme-' . TD_THEME_NAME;
 	return $classes;
 }

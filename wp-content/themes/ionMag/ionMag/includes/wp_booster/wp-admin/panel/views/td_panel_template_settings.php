@@ -8,7 +8,7 @@
     <div class="td-box-row">
         <div class="td-box-description td-box-full">
             <span class="td-box-title">Warning</span>
-            <p>If you plan to use Google Adsense in the sidebar don't enable this feature. Google's policy doesn't allow placing the ad in a "floating box", you can read more about it <a target="_blank" href="https://support.google.com/adsense/answer/1354742?hl=en">here</a>.</p>
+            <p>If you plan to use Google AdSense in the sidebar don't enable this feature. Google's policy doesn't allow placing the ad in a "floating box", you can read more about it <a target="_blank" href="https://support.google.com/adsense/answer/1354742?hl=en">here</a>.</p>
         </div>
     </div>
 
@@ -210,7 +210,7 @@
 <?php echo td_panel_generator::box_end();?>
 
 
-<?php if ('Newspaper' == TD_THEME_NAME) { ?>
+<?php if ('Newspaper' == TD_THEME_NAME || 'ionMag' == TD_THEME_NAME) { ?>
     <!-- Force full width -->
     <?php echo td_panel_generator::box_start('Force full width', false); ?>
     <!-- text -->
@@ -277,6 +277,23 @@
         </div>
 
         <div class="td-box-description">
+            <span class="td-box-title">Header ⇢ Background</span>
+            <p></p>
+        </div>
+        <div class="td-box-control-full">
+            <?php
+            echo td_panel_generator::dropdown(array(
+                'ds' => 'td_option',
+                'option_id' => 'td_full_header_background',
+                'values' => array(
+                    array('text' => 'No stretch' , 'val' => ''),
+                    array('text' => 'Stretch container' , 'val' => 'td_stretch_container'), // stretch_container
+                )
+            ));
+            ?>
+        </div>
+
+        <div class="td-box-description">
             <span class="td-box-title">Footer ⇢ Instagram</span>
             <p></p>
         </div>
@@ -310,6 +327,9 @@
             ?>
         </div>
     </div>
+
+
+
     <?php echo td_panel_generator::box_end();?>
 <?php } ?>
 
@@ -325,9 +345,9 @@
 <!-- text -->
 <div class="td-box-row">
     <div class="td-box-description td-box-full">
-        <p>In this section you can configure the <a href="http://codex.wordpress.org/Template_Hierarchy" target="_blank">default wordpress templates</a>. Most of the templates support the following configurations:</p>
+        <p>In this section you can configure the <a href="http://codex.wordpress.org/Template_Hierarchy" target="_blank">default WordPress templates</a>. Most of the templates support the following configurations:</p>
         <ul>
-            <li>How to display posts in the default wordpress loops</li>
+            <li>How to display posts in the default WordPress loops</li>
             <li>Sidebar position</li>
             <li>What sidebar to show</li>
         </ul>
@@ -433,9 +453,9 @@
                     'ds' => 'td_option',
                     'option_id' => 'tds_archive_sidebar_pos',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     )
                 ));
                 ?>
@@ -482,9 +502,9 @@
                     'ds' => 'td_option',
                     'option_id' => 'tds_attachment_sidebar_pos',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     )
                 ));
                 ?>
@@ -550,9 +570,9 @@
                     'ds' => 'td_option',
                     'option_id' => 'tds_author_sidebar_pos',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     )
                 ));
                 ?>
@@ -617,9 +637,9 @@
                     'ds' => 'td_option',
                     'option_id' => 'tds_home_sidebar_pos',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     )
                 ));
                 ?>
@@ -672,9 +692,9 @@
                     'ds' => 'td_option',
                     'option_id' => 'tds_page_sidebar_pos',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     )
                 ));
                 ?>
@@ -762,9 +782,9 @@
                     'ds' => 'td_option',
                     'option_id' => 'tds_search_sidebar_pos',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     )
                 ));
                 ?>
@@ -830,9 +850,9 @@
                     'ds' => 'td_option',
                     'option_id' => 'tds_tag_sidebar_pos',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     )
                 ));
                 ?>
@@ -856,9 +876,9 @@
 
 
 <!-- Woocommerce template -->
-<?php echo td_panel_generator::box_start('Woocommerce template', false); ?>
+<?php echo td_panel_generator::box_start('WooCommerce template', false); ?>
     <div class="td-box-description td-box-full">
-        <p>Set the custom sidebar and position for the woocommerce pages.</p>
+        <p>Set the custom sidebar and position for the WooCommerce pages.</p>
     </div>
 
 
@@ -876,9 +896,9 @@
                     'ds' => 'td_option',
                     'option_id' => 'tds_woo_sidebar_pos',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     )
                 ));
                 ?>
@@ -910,9 +930,9 @@
                     'ds' => 'td_option',
                     'option_id' => 'tds_woo_single_sidebar_pos',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     )
                 ));
                 ?>
@@ -957,9 +977,9 @@
                     'ds' => 'td_option',
                     'option_id' => 'tds_bbpress_sidebar_pos',
                     'values' => array(
-                        array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                        array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                        array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                        array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                        array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                        array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                     )
                 ));
                 ?>
@@ -1024,9 +1044,9 @@
                 'ds' => 'td_option',
                 'option_id' => 'tds_taxonomy_post_format_sidebar_pos',
                 'values' => array(
-                    array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                    array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                    array('text' => '', 'title' => '', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                    array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                    array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                    array('text' => '', 'title' => 'Sidebar Right', 'val' => '', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                 )
             ));
             ?>

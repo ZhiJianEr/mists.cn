@@ -527,9 +527,6 @@ class td_tokenizer {
         );
     }
 
-
-
-
     private function is_title_open($token) {
         $this->log_step(__FUNCTION__, $token);
         $matches = array();
@@ -696,7 +693,7 @@ class td_tokenizer {
      * @return mixed
      */
     private function extract_description_from_first_image($token) {
-        $matches = '';
+        $matches = array();
         $buffy = '';
 
 
@@ -729,7 +726,7 @@ class td_tokenizer {
         //2. no match found
         if ($buffy == '') {
             //search for the FIRST img if we didn't find any links in the block of text
-            $matches = '';
+            $matches = array();
             preg_match('/<img.*\/>/U', $token, $matches); //extract first image
             if (!empty($matches[0])) {
                 // we need the extra str_replace because the $matches[0] is user entered in tinymce
@@ -789,9 +786,19 @@ class td_tokenizer {
 
     private function get_image_link_from_token($token) {
         $matches = array();
-        preg_match('/<figure(.*)href="([^\\"]+)(.*)<figcaption/', $token, $matches);
-        if (!empty($matches[2])) {
-            return $matches[2];
+
+        if ( strpos($token, '</figcaption>') !== false) {
+            preg_match('/<figure(.*)href="([^\\"]+)(.*)<figcaption/', $token, $matches);
+            if (!empty($matches[2])) {
+                return $matches[2];
+            } else {
+                return '';
+            }
+        }
+
+        preg_match('/href="([^\\"]+)"/', $token, $matches);
+        if (!empty($matches[1])) {
+            return $matches[1];
         } else {
             return '';
         }

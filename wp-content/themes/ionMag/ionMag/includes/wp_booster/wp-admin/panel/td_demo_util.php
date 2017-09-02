@@ -254,7 +254,7 @@ class td_demo_misc extends td_demo_base {
 	 * @param $social_icons
 	 */
     static function add_social_buttons($social_icons) {
-        td_util::update_option('td_social_networks', $social_icons);
+        td_options::update_array('td_social_networks', $social_icons);
     }
 
 
@@ -262,7 +262,7 @@ class td_demo_misc extends td_demo_base {
 	 * remove all the ads from the theme options. Must be called before adding custom ads
 	 */
     static function clear_all_ads() {
-        td_util::update_option('td_ads', '');
+        td_options::update_array('td_ads', array());
     }
 
 
@@ -272,11 +272,11 @@ class td_demo_misc extends td_demo_base {
 	 * @param $td_image_id
 	 */
     static function add_ad_image($ad_spot_name, $td_image_id) {
-        $td_ad_spots = td_util::get_option('td_ads');
-        $new_ad_spot['ad_code']= '<div class="td-all-devices"><a href="#"><img src="' . td_demo_media::get_image_url_by_td_id($td_image_id) . '"/></a></div>';
+        $td_ad_spots = td_options::get_array('td_ads');
+        $new_ad_spot['ad_code']= '<div class="td-all-devices"><a href="#" target="_blank"><img src="' . td_demo_media::get_image_url_by_td_id($td_image_id) . '"/></a></div>';
         $new_ad_spot['current_ad_type']= 'other';
         $td_ad_spots[strtolower($ad_spot_name)] = $new_ad_spot;
-        td_util::update_option('td_ads', $td_ad_spots);
+        td_options::update_array('td_ads', $td_ad_spots);
     }
 
 
@@ -294,6 +294,14 @@ class td_demo_misc extends td_demo_base {
     }
 
 
+    static function update_background_header($td_image_id) {
+        if ($td_image_id == '') {
+            td_util::update_option('tds_header_background_image', '');
+        }
+        td_util::update_option('tds_header_background_image', td_demo_media::get_image_url_by_td_id($td_image_id));
+    }
+
+
     static function update_background_footer($td_image_id) {
         if ($td_image_id == '') {
             td_util::update_option('tds_footer_background_image', '');
@@ -307,6 +315,13 @@ class td_demo_misc extends td_demo_base {
             td_util::update_option('tds_mobile_background_image', '');
         }
         td_util::update_option('tds_mobile_background_image', td_demo_media::get_image_url_by_td_id($td_image_id));
+    }
+
+    static function update_background_login($td_image_id) {
+        if ($td_image_id == '') {
+            td_util::update_option('tds_login_background_image', '');
+        }
+        td_util::update_option('tds_login_background_image', td_demo_media::get_image_url_by_td_id($td_image_id));
     }
 
 
@@ -335,6 +350,58 @@ class td_demo_misc extends td_demo_base {
         } else {
             td_util::update_option('tds_footer_retina_logo_upload', td_demo_media::get_image_url_by_td_id($logo_params['retina']));
         }
+    }
+
+
+    /**
+     * resets themes uploaded images for demo export
+     */
+    static function clear_uploads_for_demo_export() {
+
+        //header logos
+        td_util::update_option('tds_logo_upload', '');
+        td_util::update_option('tds_logo_upload_r', '');
+
+        //favicon
+        td_util::update_option('tds_favicon_upload', '');
+
+        //mobile logos
+        td_util::update_option('tds_logo_menu_upload', '');
+        td_util::update_option('tds_logo_menu_upload_r', '');
+
+        //ios bookmarklets
+        td_util::update_option('tds_ios_icon_76', '');
+        td_util::update_option('tds_ios_icon_114', '');
+        td_util::update_option('tds_ios_icon_120', '');
+        td_util::update_option('tds_ios_icon_144', '');
+        td_util::update_option('tds_ios_icon_152', '');
+
+        //backgrounds
+        td_util::update_option('tds_site_background_image', '');
+        td_util::update_option('tds_header_background_image', '');
+        td_util::update_option('tds_mobile_background_image', '');
+        td_util::update_option('tds_login_background_image', '');
+        td_util::update_option('tds_footer_background_image', '');
+
+        //footer logos
+        td_util::update_option('tds_footer_logo_upload', '');
+        td_util::update_option('tds_footer_retina_logo_upload', '');
+
+        //categories bg img
+        $td_options = &td_options::get_all_by_ref();
+        $categories = get_categories( array(
+                'hide_empty' => 0
+            ));
+
+        foreach ( $categories as $category ) {
+            if ( isset ($td_options['category_options'][$category->cat_ID]['tdc_image']) ) {
+                $td_options['category_options'][$category->cat_ID]['tdc_image'] = '';
+            }
+        }
+
+        //recompile user css
+        td_options::update('tds_user_compile_css', td_css_generator());
+
     }
 }
 
@@ -514,6 +581,60 @@ class td_demo_content extends td_demo_base {
                 $file_content = str_replace($matches[0][$index], td_demo_media::get_by_td_id($match), $file_content);
             }
         }
+
+
+	    preg_match_all( "/tdc_css=\"\S*\"/", $file_content, $css_matches, PREG_PATTERN_ORDER );
+	    if ( !empty( $css_matches ) and is_array( $css_matches ) ) {
+
+//		    echo '<pre>';
+//		    var_dump( $css_matches );
+//		    echo '</pre>';
+
+		    foreach ( $css_matches[0] as $css_key => $css_match ) {
+
+			    $match = str_replace( array('tdc_css="', '"' ), '', $css_match );
+
+			    $decoded_match = base64_decode( $match );
+
+
+
+			    $img_matches = array();
+			    preg_match_all("/url\((\S*)xxx_(\S*)_xxx(\S*)\)/U", $decoded_match, $img_matches );
+
+			    if ( !empty( $img_matches ) &&
+			         count( $img_matches ) >= 3 &&
+			         is_array( $img_matches[0] ) && ! empty( $img_matches[0] ) &&
+			         is_array( $img_matches[1] ) &&
+			         is_array( $img_matches[2] ) ) {
+
+//				    echo '<pre>';
+//				    var_dump( $decoded_match );
+//				    echo '</pre>';
+//
+//				    echo '<pre>';
+//				    var_dump( $img_matches );
+//				    echo '</pre>';
+//				    //die;
+
+				    foreach ( $img_matches[0] as $index => $img_match ) {
+
+//					    echo '<pre>';
+//					    echo $img_matches[2][$index];
+//					    echo '</pre>';
+//
+					    $decoded_match = str_replace( $img_match, 'url(\"' . td_demo_media::get_image_url_by_td_id($img_matches[2][$index]) . '\")', $decoded_match );
+//
+//					    echo '<pre>';
+//					    echo $decoded_match;
+//					    echo '</pre>';
+
+				    }
+			    }
+
+			    $file_content = str_replace( $css_matches[0][$css_key], 'tdc_css="' . base64_encode( $decoded_match ) . '"' , $file_content );
+		    }
+		    //echo $file_content;
+	    }
 
         return $file_content;
     }
@@ -721,7 +842,7 @@ class td_demo_widgets extends td_demo_base {
         if (substr($sidebar_name, 0, 8) != 'td_demo_') {
 	        self::kill(__CLASS__, __FUNCTION__, 'All sidebars used in the demo must begin with td_demo_');
         }
-        $tmp_sidebars = td_util::get_option('sidebars');
+        $tmp_sidebars = td_options::get_array('sidebars');
         $tmp_sidebars[]= $sidebar_name;
         td_util::update_option('sidebars', $tmp_sidebars);
     }
@@ -741,7 +862,7 @@ class td_demo_widgets extends td_demo_base {
 	 */
     static function add_widget_to_sidebar($sidebar_id, $widget_name, $atts) {
 
-        $tmp_sidebars = td_util::get_option('sidebars');
+        $tmp_sidebars = td_options::get_array('sidebars');
 	    if (empty($tmp_sidebars)) {
 		    $tmp_sidebars = array();
 	    }
@@ -802,14 +923,14 @@ class td_demo_widgets extends td_demo_base {
      * remove the sidebars that begin with td_demo_
      */
     static function remove() {
-        $tmp_sidebars = td_util::get_option('sidebars');
+        $tmp_sidebars = td_options::get_array('sidebars');
         if (!empty($tmp_sidebars)) {
             foreach ($tmp_sidebars as $index => $sidebar) {
                 if (substr($sidebar, 0, 8) == 'td_demo_') {
                     unset($tmp_sidebars[$index]);
                 }
             }
-	        td_util::update_option('sidebars', $tmp_sidebars);
+	        td_options::update_array('sidebars', $tmp_sidebars);
         }
 
     }

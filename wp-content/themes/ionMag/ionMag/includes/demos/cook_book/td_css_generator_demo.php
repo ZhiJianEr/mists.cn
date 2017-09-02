@@ -9,21 +9,10 @@
 function td_css_demo_gen() {
 	$td_demo_custom_css = "
 	<style>
+
 		/* @theme_color */
-      	.td-cook-book .td-scroll-up {
-            background-color: @theme_color;
-        }
-      	.td-cook-book .block-title,
-      	.td-cook-book .td-scroll-up {
-      	    border-color: @theme_color;
-      	}
-      	
-      	/* @text_header_color */
-        div .block-title label,
-        div .block-title span,
-        div .block-title a {
-          color: @text_header_color !important;
-        }
+
+
 	</style>
 	";
 

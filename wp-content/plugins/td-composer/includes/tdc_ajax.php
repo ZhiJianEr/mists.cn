@@ -129,6 +129,16 @@ class tdc_ajax {
 
 
 		/**
+		 * Hook to set param blockUid.
+		 * It's called by those shortcodes who needs an unique id in DOM, but without any other block settings (ex. rows, inner rows). Usually these shortcodes does not call 'td_block__get_block_js' hook
+		 */
+		add_action( 'td_block_set_unique_id', 'tdc_on_td_block_set_unique_id', 10, 1 );
+		function tdc_on_td_block_set_unique_id( $by_ref_block_obj ) {
+			tdc_ajax::$_td_block__get_block_uid = $by_ref_block_obj->block_uid;
+		}
+
+
+		/**
 		 * hook td_block__get_block_js so we can receive the JS for EVAL form the block when do_shortcode is called below
 		 */
 		add_action( 'td_block__get_block_js', 'tdc_on_td_block__get_block_js', 10, 1 );
@@ -205,9 +215,7 @@ class tdc_ajax {
 		$post_id      = $_POST['tdc_post_id'];
 		$post_content = $_POST['tdc_content'];
 
-		if ( isset( $_POST['tdc_page_template'] ) ) {
-			$tdc_page_template = $_POST['tdc_page_template'];
-		}
+		$meta = $_POST['tdc_customized'];
 
 		if ( ! isset( $action ) || 'tdc_ajax_save_post' !== $action || ! isset( $post_id ) || ! isset( $post_content ) ) {
 
@@ -231,9 +239,38 @@ class tdc_ajax {
 				update_post_meta( $post_id, 'tdc_dirty_content', 0 );
 				update_post_meta( $post_id, 'tdc_content', $post_content );
 
-				if ( isset( $tdc_page_template ) ) {
-					// Update the page template
-					update_post_meta( $post_id, '_wp_page_template', $tdc_page_template );
+				$td_homepage_loop = get_post_meta( $post_id, 'td_homepage_loop', true );
+				$td_page = get_post_meta( $post_id, 'td_page', true );
+
+				if ( isset( $meta ) ) {
+					$decoded_meta = json_decode( wp_unslash( $meta ), true );
+
+					if ( is_array( $decoded_meta ) && isset( $decoded_meta['page_settings'] ) ) {
+						$decoded_page_settings = json_decode( wp_unslash( $decoded_meta['page_settings'] ), true );
+
+						if ( is_array( $decoded_page_settings ) ) {
+
+							if ( isset( $decoded_page_settings['td_homepage_loop'] ) ) {
+								foreach ( $decoded_page_settings['td_homepage_loop'] as $key => $val ) {
+									$td_homepage_loop[0][ $key ] = $val;
+								}
+
+								update_post_meta( $post_id, 'td_homepage_loop', $td_homepage_loop[0] );
+							}
+
+							if ( isset( $decoded_page_settings['td_page'] ) ) {
+								foreach ( $decoded_page_settings['td_page'] as $key => $val ) {
+									$td_page[0][ $key ] = $val;
+								}
+
+								update_post_meta( $post_id, 'td_page', $td_page[0] );
+							}
+
+							if ( isset( $decoded_page_settings['page_template'] ) ) {
+								update_post_meta( $post_id, '_wp_page_template', $decoded_page_settings['page_template'] );
+							}
+						}
+					}
 				}
 
 				// Reset the vc status
@@ -241,6 +278,9 @@ class tdc_ajax {
 
 				// Update the live panel settings
 				td_panel_data_source::update();
+
+				// Extensions do their own savings
+				do_action( 'tdc_extension_save', $request );
 			}
 		}
 		die( json_encode( $parameters ) );
@@ -309,7 +349,7 @@ class tdc_ajax {
 			$parameters['errors'][] = 'Invalid data';
 
 		} else {
-			$parameters['parsed_content'] = htmlentities( rawurldecode( base64_decode( strip_tags( $content ) ) ) );
+			$parameters['parsed_content'] = htmlentities( rawurldecode( base64_decode( $content ) ), ENT_QUOTES, "UTF-8" );
 		}
 		die( json_encode( $parameters ) );
 	}

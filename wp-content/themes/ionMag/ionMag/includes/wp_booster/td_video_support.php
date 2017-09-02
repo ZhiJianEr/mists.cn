@@ -67,19 +67,18 @@ class td_video_support{
                 ';
 				break;
 			case 'facebook':
-				$buffy = '
-				<div class="wpb_video_wrapper">
-					<iframe src="' . td_global::$http_or_https . '://www.facebook.com/plugins/video.php?href=' . urlencode($videoUrl) . '&show_text=0&width=560" width="600" height="560" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true" ></iframe>
+				/* $buffy = '
+				<div class="wpb_video_wrapper td-facebook-video">
+					<iframe src="' . td_global::$http_or_https . '://www.facebook.com/plugins/video.php?href=' . urlencode($videoUrl) . '&show_text=0" width="' . $width . '" height="' . $height . '" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true" ></iframe>
 				</div>
 				';
+				*/
 
 				/**
-				 * cache & oembed implementation				 *
+				 * cache & oembed implementation
 				 */
-
-				/*$cache_key = self::get_facebook_id($videoUrl);
+				$cache_key = self::get_facebook_id($videoUrl);
 				$group = 'td_facebook_video';
-
 
 				if (td_remote_cache::is_expired($group, $cache_key) === true) {
 
@@ -111,7 +110,7 @@ class td_video_support{
 					// cache is valid
 					$api_html_embed_data = td_remote_cache::get($group, $cache_key);
 					$buffy = '<div class="wpb_video_wrapper">' . $api_html_embed_data . '</div>';
-				}*/
+				}
 				break;
 			case 'twitter':
 
@@ -173,7 +172,7 @@ class td_video_support{
 				return;
 			}
 
-			$td_post_video = get_post_meta($post_id, 'td_post_video', true);
+			$td_post_video = td_util::get_post_meta_array($post_id, 'td_post_video');
 
 			//check to see if the url is valid
 			if (empty($td_post_video['td_video']) or self::validate_video_url($td_post_video['td_video']) === false) {

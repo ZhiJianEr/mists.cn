@@ -1,12 +1,12 @@
 <div class="td-header-sp-top-menu">
 	<?php
-	/*// show the weather if needed
+	// show the weather if needed
 	if (td_util::get_option('tds_weather_top_menu') == 'show') {
 		$atts['w_location'] = td_util::get_option('tds_weather_location_top_menu');
 		$atts['w_units'] = td_util::get_option('tds_weather_units_top_menu');
 		// render the weather
 		echo td_weather::render_generic($atts, 'td_top_weather_uid', 'top_bar_template');
-	}*/
+	}
 
 	// show the date and time if needed
     if (td_util::get_option('tds_data_top_menu') == 'show') {
@@ -48,7 +48,7 @@
                  </ul>';
         } else {
 
-            echo '<ul class="top-header-menu td_ul_login"><li class="menu-item"><a class="menu-item" href="/login">' . __td('Sign in / Join', TD_THEME_NAME) . '</a><span class="td-sp-ico-login td_sp_login_ico_style"></span></li></ul>';
+            echo '<ul class="top-header-menu td_ul_login"><li class="menu-item"><a class="td-login-modal-js menu-item" href="#login-form" data-effect="mpf-td-login-effect">' . __td('Sign in / Join', TD_THEME_NAME) . '</a><span class="td-sp-ico-login td_sp_login_ico_style"></span></li></ul>';
         }
     }//end login window
 

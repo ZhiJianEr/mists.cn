@@ -1,0 +1,36 @@
+// Clearfix
+.clearfix {
+  *zoom: 1;
+  &:before,
+  &:after {
+    display: table;
+    content: '';
+    line-height: 0;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+// Transitions
+.transition(@transition) {
+  -webkit-transition: @transition;
+  -moz-transition: @transition;
+  -o-transition: @transition;
+  transition: @transition;
+}
+
+// Opacity
+.opacity(@value) {
+  @ieval: @value*100;
+  opacity: @value;
+  -ms-filter: %("progid:DXImageTransform.Microsoft.Alpha(Opacity='%a')", @ieval);
+  filter: alpha(opacity=@ieval);
+}
+
+// Drop shadows
+.box-shadow(@shadow) {
+  -webkit-box-shadow: @shadow;
+  -moz-box-shadow: @shadow;
+  box-shadow: @shadow;
+}

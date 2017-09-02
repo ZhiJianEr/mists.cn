@@ -457,6 +457,23 @@
         </div>
     </div>
 
+    <!-- LAYOUT -->
+    <div class="td-box-row">
+        <div class="td-box-description">
+            <span class="td-box-title">Sub footer templates</span>
+            <p>Set the sub footer template</p>
+        </div>
+        <div class="td-box-control-full">
+            <?php
+            echo td_panel_generator::visual_select_o(array(
+                'ds' => 'td_option',
+                'option_id' => 'tds_sub_footer_template',
+                'values' => td_api_sub_footer_template::_helper_to_panel_values()
+            ));
+            ?>
+        </div>
+    </div>
+
     <!-- Footer copyright text -->
     <div class="td-box-row">
         <div class="td-box-description">

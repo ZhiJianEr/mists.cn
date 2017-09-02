@@ -11,7 +11,11 @@
  * - the 'action' of the 'tdc-live-panel' frame is set to the tdcAdminIFrameUI._$liveIframe url parameter
  * - the 'tdc_content' hidden param is set to the current content (the content generated from the backbone structure)
  */
+
 ?>
+
+
+
 
 <form id="tdc-live-panel" method="post">
 
@@ -32,29 +36,6 @@
 
 	<input type="hidden" id="tdc_content" name="tdc_content" value="">
 	<input type="hidden" id="tdc_customized" name="tdc_customized" value="">
-
-	<!-- WP SETTINGS -->
-	<?php echo td_panel_generator::box_start('Template settings', false); ?>
-
-		<select name="tdc_page_template" id="tdc_page_template">
-			<?php
-			/**
-			 * Filter the title of the default page template displayed in the drop-down.
-			 *
-			 * @since 4.1.0
-			 *
-			 * @param string $label   The display value for the default page template title.
-			 * @param string $context Where the option label is displayed. Possible values
-			 *                        include 'meta-box' or 'quick-edit'.
-			 */
-			$template = !empty($post->page_template) ? $post->page_template : false;
-			$default_title = apply_filters( 'default_page_template_title',  __( 'Default Template' ), 'meta-box' );
-			?>
-			<option value="default"><?php echo esc_html( $default_title ); ?></option>
-			<?php page_template_dropdown($template); ?>
-		</select>
-
-	<?php echo td_panel_generator::box_end();?>
 
 	<!-- HEADER STYLE -->
 	<?php echo td_panel_generator::box_start('Header Style', false); ?>
@@ -99,6 +80,19 @@
 	
 	<?php echo td_panel_generator::box_end();?>
 
+
+	<!-- PAGE SETTINGS -->
+	<?php echo td_panel_generator::box_start('Page Settings', false); ?>
+		<a href="#" class="tdc-page-settings"> </a>
+	<?php echo td_panel_generator::box_end();?>
+
+
+	<?php
+
+		// Extensions add their content in 'tdc-live-panel' (usually their own hidden input fields that will be saved by composer - see 'tdc_extension_save' action)
+		do_action( 'tdc_extension_settings' );
+
+	?>
 
 </form>
 

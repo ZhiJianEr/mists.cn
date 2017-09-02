@@ -26,6 +26,7 @@ require_once('shortcodes/vc_separator.php' );
 require_once('shortcodes/vc_wp_recentcomments.php' );
 
 
+
 // mapper and internal map
 require_once('tdc_mapper.php');
 require_once('tdc_map.php');
@@ -33,6 +34,7 @@ require_once('tdc_map.php');
 
 /**
  * WP-admin - add js in header on all the admin pages (wp-admin and the iframe Wrapper. Does not run in the iframe)
+ * It's on general, and not only for 'td-action=tdc' because it's also used on widgets' page.
  */
 add_action( 'admin_head', 'tdc_on_admin_head' );
 function tdc_on_admin_head() {
@@ -88,6 +90,7 @@ function tdc_on_admin_head() {
 			'menus' => new stdClass()
 		),
 		'registeredSidebars' => $GLOBALS['wp_registered_sidebars'],
+		'hasUserRights' => is_user_logged_in() && current_user_can('switch_themes'),
 	);
 
 	ob_start();
@@ -99,6 +102,17 @@ function tdc_on_admin_head() {
 	<?php
 	$buffer = ob_get_clean();
 	echo $buffer;
+}
+
+
+add_action( 'after_setup_theme', 'tdc_on_register_external_shortcodes' );
+function tdc_on_register_external_shortcodes() {
+
+	if ( tdc_state::is_live_editor_iframe() || tdc_state::is_live_editor_ajax() ) {
+		register_external_shortcodes();
+	} else {
+		wrap_external_shortcodes();
+	}
 }
 
 
@@ -145,21 +159,20 @@ function tdc_on_admin_bar_menu() {
 	//print_r($wp_admin_bar);
 	//die;
 
-	if (!current_user_can('edit_pages') || !is_admin_bar_showing() || !is_page()) {
-		return;
+//  if (!current_user_can('edit_pages') || !is_admin_bar_showing() || !is_page()) {
+//		return;
+//	}
+
+	if (is_user_logged_in() && current_user_can('switch_themes') && is_admin_bar_showing() && is_page()) {
+		$wp_admin_bar->add_menu( array(
+			'id'    => 'tdc_edit',
+			'meta'  => array(
+				'title' => 'Edit with TD Composer'
+			),
+			'title' => 'Edit with TD Composer',
+			'href'  => admin_url( 'post.php?post_id=' . $post->ID . '&td_action=tdc' )
+		) );
 	}
-
-
-	$wp_admin_bar->add_menu(array(
-		'id'   => 'tdc_edit',
-		'meta' => array (
-			'title' => 'Edit with TD Composer'
-		),
-
-		'title' => 'Edit with TD Composer',
-		'href' => admin_url('post.php?post_id=' . $post->ID . '&td_action=tdc')
-	));
-
 }
 
 
@@ -213,10 +226,10 @@ if ( false === $tmpJobId ) {
 
 
 
-// Add external shortcodes
-if ( tdc_state::is_live_editor_iframe() || tdc_state::is_live_editor_ajax() ) {
-	register_external_shortcodes();
-
+//// Add external shortcodes
+//if ( tdc_state::is_live_editor_iframe() || tdc_state::is_live_editor_ajax() ) {
+//	register_external_shortcodes();
+//
 //	// Change the callbacks of the shortcodes not registered in TagDiv Composer
 //	// Important! Here it's too late to map these shortcodes, the mapping should be where the '$tdc_admin_settings' is set (@see 'admin_head' action)
 //	add_filter( 'the_content', 'tdc_on_the_content' );
@@ -253,12 +266,9 @@ if ( tdc_state::is_live_editor_iframe() || tdc_state::is_live_editor_ajax() ) {
 //
 //		return $content;
 //	}
-}
+//}
 
 
-function tdc_external_shortcode($atts, $content, $name) {
-	return '<div class="td_block_wrap tdc-external-shortcode">Shortcode: ' . $name .'</div>';
-}
 
 
 //function tdc_map_not_registered_shortcodes($postId) {
@@ -362,6 +372,9 @@ if (!empty($td_action)) {
 				remove_all_actions('admin_notices');
 				remove_all_actions('network_admin_notices');
 
+				// Disables all the updates notifications regarding plugins, themes & WordPress completely.
+				tdc_disable_notification();
+
 				require_once('templates/frontend.tpl.php');
 				die;
 			}
@@ -372,6 +385,12 @@ if (!empty($td_action)) {
 
 			// Iframe content post
 			add_filter( 'show_admin_bar', '__return_false' );
+
+			add_filter( 'body_class', 'tdc_on_body_class' );
+			function tdc_on_body_class( $classes ) {
+				$classes[] = 'tdc-theme-' . TD_THEME_NAME;
+				return $classes;
+			}
 
 			add_filter( 'the_content', 'tdc_on_the_content', 10000, 1 );
 			function tdc_on_the_content( $content ) {
@@ -389,9 +408,7 @@ if (!empty($td_action)) {
 			add_filter( 'get_post_metadata', 'tdc_on_get_post_metadata', 10, 4 );
 			function tdc_on_get_post_metadata( $value, $object_id, $meta_key, $single ) {
 
-				if ( isset( $_POST['tdc_page_template'] ) && '_wp_page_template' === $meta_key ) {
-					return $_POST['tdc_page_template'];
-				}
+				tdc_state::set_customized_settings();
 
 				if ( 'td_mega_menu_cat' === $meta_key || 'td_mega_menu_page_id' === $meta_key ) {
 					// Look inside of the customized menu settings
@@ -404,6 +421,22 @@ if (!empty($td_action)) {
 								return $value_menu_settings[ $meta_key .'[' . $object_id . ']' ];
 							}
 						}
+					}
+
+				} else if ( 'td_homepage_loop' === $meta_key || 'td_page' === $meta_key ) {
+					// Look inside of the customized page settings
+
+					$customized_page_settings = tdc_state::get_customized_page_settings();
+
+					if ( false !== $customized_page_settings ) {
+						return array( $customized_page_settings[ $meta_key ] );
+					}
+
+				} else if ( '_wp_page_template' === $meta_key ) {
+					$customized_page_settings = tdc_state::get_customized_page_settings();
+
+					if ( false !== $customized_page_settings ) {
+						return array( $customized_page_settings[ 'page_template' ] );
 					}
 				}
 				return $value;
@@ -688,10 +721,12 @@ if (!empty($td_action)) {
 /**
  * edit with td composer
  */
-add_filter( 'page_row_actions', 'tdc_on_page_row_actions', 10, 2 );
-function tdc_on_page_row_actions ( $actions, $post ) {
-	$actions['edit_tdc_composer'] = '<a href="' . admin_url('post.php?post_id=' . $post->ID . '&td_action=tdc') . '">Edit with TD Composer</a>';
-	return $actions;
+if ( is_user_logged_in() && current_user_can('switch_themes')) {
+	add_filter( 'page_row_actions', 'tdc_on_page_row_actions', 10, 2 );
+	function tdc_on_page_row_actions( $actions, $post ) {
+		$actions['edit_tdc_composer'] = '<a href="' . admin_url( 'post.php?post_id=' . $post->ID . '&td_action=tdc' ) . '">Edit with TD Composer</a>';
+		return $actions;
+	}
 }
 
 
@@ -706,11 +741,11 @@ function on_admin_head_add_tdc_loader() {
 	?>
 	<style>
 		body > * {
-			visibility:hidden;
+			opacity:0;
 		}
 
 		.tdc-fullscreen-loader-wrap {
-			visibility: visible !important;
+			opacity: 1 !important;
 		}
 	</style>
 
@@ -730,9 +765,6 @@ if ( 'nav-menus' === basename($_SERVER["SCRIPT_FILENAME"], '.php') && false !== 
 	function on_admin_head_add_menu_settings() {
 		?>
 		<style>
-			.tdc-menu-settings {
-
-			}
 			#wpcontent {
 			    margin-left: 0;
 				margin-top: -30px;
@@ -764,10 +796,130 @@ if ( 'nav-menus' === basename($_SERVER["SCRIPT_FILENAME"], '.php') && false !== 
 			}
 
 		</style>
+
+		<script>
+			(function(){
+
+				jQuery(window).load(function() {
+					var $wpbodyContent = jQuery( '#wpbody-content' );
+						$wrap = $wpbodyContent.children( '.wrap' );
+
+
+					$wrap.siblings().hide();
+
+					$wrap.children().each(function(index, el) {
+						var $el = jQuery(el),
+							elId = $el.attr( 'id' );
+						if ( 'nav-menus-frame' !== elId ) {
+							$el.hide();
+						}
+					});
+
+				});
+
+			})();
+		</script>
 		<?php
+
+		// Disables all the updates notifications regarding plugins, themes & WordPress completely.
+		tdc_disable_notification();
 	}
 }
 
+
+// Set the tdc_state
+$tdcPageSettings = tdc_util::get_get_val( 'tdc-page-settings' );
+if ( 'post' === basename($_SERVER["SCRIPT_FILENAME"], '.php') && false !== $tdcPageSettings ) {
+	add_action('admin_head', 'on_admin_head_add_page_settings');
+	function on_admin_head_add_page_settings() {
+		?>
+		<style>
+			#wpcontent {
+			    margin-left: 0;
+				margin-top: -30px;
+			}
+
+			#nav-menus-frame {
+				margin-top: 0;
+			}
+
+			#wpadminbar,
+			#screen-meta,
+			#screen-meta-links,
+			#adminmenumain,
+			#wpfooter,
+			.wrap > h1,
+			.wrap > h2,
+			.wrap > .manage-menus,
+			.menu-save,
+			.delete-action,
+			.error,
+			.update-nag,
+			.major-publishing-actions,
+
+			.page-title-action,
+			.notice,
+			#submitdiv,
+			#postimagediv,
+			#post-body-content {
+				display: none !important;
+			}
+
+			#wpbody-content {
+				padding-bottom: 0;
+			}
+
+
+		</style>
+
+		<script>
+			(function(){
+
+				jQuery(window).load(function() {
+					var $wpbodyContent = jQuery( '#wpbody-content' ),
+						$wrap = $wpbodyContent.children( '.wrap' ),
+						$normalSortables = $wpbodyContent.find( '#normal-sortables' );
+
+
+					$wrap.siblings().hide();
+					$wrap.children( 'form' ).siblings().hide();
+
+					$normalSortables.children().each(function(index, el) {
+						var $el = jQuery(el),
+							elId = $el.attr( 'id' );
+
+						if ( 'td_homepage_loop_metabox' !== elId && 'td_page_metabox' !== elId ) {
+							$el.hide();
+						}
+					});
+
+				});
+
+			})();
+		</script>
+		<?php
+
+//		// Disables all the updates notifications regarding plugins, themes & WordPress completely.
+//		tdc_disable_notification();
+
+
+	}
+}
+
+
+/**
+ * Disables all the updates notifications regarding plugins, themes & WordPress completely.
+ */
+function tdc_disable_notification() {
+	add_filter( 'pre_site_transient_update_core','tdc_on_remove_core_updates' );
+	add_filter( 'pre_site_transient_update_plugins','tdc_on_remove_core_updates' );
+	add_filter( 'pre_site_transient_update_themes','tdc_on_remove_core_updates' );
+
+	function tdc_on_remove_core_updates(){
+		global $wp_version;
+		return (object) array('last_checked'=> time(),'version_checked'=> $wp_version);
+	}
+}
 
 
 // Add the necessary scripts for css tab on widgets
@@ -811,7 +963,8 @@ function tdc_load_widget() {
 // Remove the auto added paragraphs - as VC does
 add_filter( 'the_content', 'tdc_on_remove_wpautop', 9 );
 function tdc_on_remove_wpautop($content) {
-	if ( 'page' === get_post_type() ) {
+	global $post;
+	if ( 'page' === get_post_type() && td_util::is_pagebuilder_content( $post ) ) {
 		remove_filter( 'the_content', 'wpautop' );
 	}
 	return $content;

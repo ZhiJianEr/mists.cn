@@ -1,7 +1,7 @@
 <div class="td-page-options-tab-wrap">
     <div class="td-page-options-tab td-page-options-tab-active" data-panel-class="td-page-option-general"><a href="#">General</a></div>
-    <div class="td-page-options-tab" data-panel-class="td-page-option-post-list"><a href="#">Posts loop settings</a></div>
-    <div class="td-page-options-tab" data-panel-class="td-page-option-unique-articles"><a href="#">Unique articles</a></div>
+    <div class="td-page-options-tab" data-panel-class="td-page-option-post-list"><a href="#">Posts Loop Settings</a></div>
+    <div class="td-page-options-tab" data-panel-class="td-page-option-unique-articles"><a href="#">Unique Articles</a></div>
 </div>
 
 
@@ -37,9 +37,9 @@
                 'item_id' => '',
                 'option_id' => 'td_sidebar_position',
                 'values' => array(
-                    array('text' => '', 'title' => '', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
-                    array('text' => '', 'title' => '', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
-                    array('text' => '', 'title' => '', 'val' => 'sidebar_right', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
+                    array('text' => '', 'title' => 'Sidebar Left', 'val' => 'sidebar_left', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-left.png'),
+                    array('text' => '', 'title' => 'No Sidebar', 'val' => 'no_sidebar', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-full.png'),
+                    array('text' => '', 'title' => 'Sidebar Right', 'val' => 'sidebar_right', 'img' => get_template_directory_uri() . '/images/panel/sidebar/sidebar-right.png')
                 ),
                 'selected_value' => $mb->get_the_value('td_sidebar_position')
             ));

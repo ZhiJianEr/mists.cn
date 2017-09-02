@@ -8,7 +8,7 @@ class td_instagram {
 
         // Instagram id is not set
         if (empty($atts['instagram_id'])) {
-            return '';
+	        return td_util::get_block_error('Instagram', 'Render failed - no data is received, please check the ID' );
         }
 
         // prepare the data
@@ -21,7 +21,7 @@ class td_instagram {
 
         // check if we have an error and return that
         if ($instagram_data_status != 'instagram_fail_cache' and $instagram_data_status != 'instagram_cache_updated' and $instagram_data_status != 'instagram_cache') {
-            return $instagram_data_status;
+	        return $instagram_data_status;
         }
 
         // render the HTML
@@ -37,7 +37,8 @@ class td_instagram {
 
         // stop render when no data is received
         if ($instagram_data['user'] == '') {
-            return self::error('Render failed - no data is received, please check the ID: ' . $atts['instagram_id']);
+            //return self::error('Render failed - no data is received, please check the ID: ' . $atts['instagram_id']);
+	        return td_util::get_block_error('Instagram', 'Render failed - no data is received, please check the ID: ' . $atts['instagram_id']);
         }
 
         // debugging
@@ -120,9 +121,9 @@ class td_instagram {
             <div class="td-instagram-header">
                 <div class="td-instagram-profile-image"><img src="<?php echo $instagram_profile_picture ?>"/></div>
                 <div class="td-instagram-meta">
-                    <div class="td-instagram-user"><a href="https://www.instagram.com/<?php echo $atts['instagram_id'] ?>" target="_blank">@<?php echo $atts['instagram_id'] ?></a></div>
+                    <div class="td-instagram-user"><a href="https://www.instagram.com/<?php echo self::strip_instagram_user($atts['instagram_id']) ?>" target="_blank">@<?php echo self::strip_instagram_user($atts['instagram_id']) ?></a></div>
                     <div class="td-instagram-followers"><span><?php echo $instagram_followers . '</span> ' .  __td('Followers', TD_THEME_NAME); ?></div>
-                    <a class="td-instagram-button" href="https://www.instagram.com/<?php echo $atts['instagram_id'] ?>" target="_blank"><?php echo __td('Follow', TD_THEME_NAME); ?></a>
+                    <a class="td-instagram-button" href="https://www.instagram.com/<?php echo self::strip_instagram_user($atts['instagram_id']) ?>" target="_blank"><?php echo __td('Follow', TD_THEME_NAME); ?></a>
                     <div class="clearfix"></div>
                 </div>
             </div>
@@ -222,7 +223,8 @@ class td_instagram {
                 // we have an error in the data retrieval process
                 $instragram_data = td_remote_cache::get(__CLASS__, $cache_key);
                 if ($instragram_data === false) {    // miss and io error... shit / die
-                    return self::error('Instagram data error: ' . $instagram_get_data);
+                    //return self::error('Instagram data error: ' . $instagram_get_data);
+	                return td_util::get_block_error('Instagram', 'Instagram data error: ' . $instagram_get_data);
                 }
 
                 td_remote_cache::extend(__CLASS__, $cache_key, self::$caching_time);
@@ -248,7 +250,7 @@ class td_instagram {
      */
     private static function instagram_get_json($atts, &$instagram_data){
 
-        $instagram_html_data = self::parse_instagram_html($atts['instagram_id']);
+        $instagram_html_data = self::parse_instagram_html(self::strip_instagram_user($atts['instagram_id']));
 
         if ($instagram_html_data === false) {
             td_log::log(__FILE__, __FUNCTION__, 'Instagram html data cannot be retrieved', $atts['instagram_id']);
@@ -309,5 +311,20 @@ class td_instagram {
             return $msg;
         }
         return '';
+    }
+
+    /**
+     * @param $id - the instagram ID
+     * @return string - user inserted instagram ID without @
+     */
+    public static function strip_instagram_user($id) {
+        $pos = strpos($id, '@');
+
+        if ( $pos !== false ) {
+            $id = substr($id, $pos+1);
+            return $id;
+        }
+
+        return $id;
     }
 }

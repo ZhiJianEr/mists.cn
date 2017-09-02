@@ -13,7 +13,6 @@ class vc_widget_sidebar extends tdc_composer_block {
 
 		$atts = shortcode_atts(
 			array(
-				'title' => '',
 				'sidebar_id' => '',
 				'el_class' => '',
 			), $atts, 'vc_widget_sidebar' );
@@ -31,17 +30,9 @@ class vc_widget_sidebar extends tdc_composer_block {
 			$sidebar_value = ( '<li' === substr( $sidebar_value, 0, 3 ) ) ? '<ul>' . $sidebar_value . '</ul>' : $sidebar_value;
 		}
 
-		$output = '<div class="wpb_wrapper td_block_wrap ' . $this->get_block_classes( array( $atts['el_class'] ) ) . '" ' . $this->get_block_html_atts() . '>';
-
-		if ( !empty($atts['title'])) {
-			$output .=
-				'<div class="td-block-title-wrap">
-					<h4 class="block-title"><span>' . $atts['title'] . '</span></h4>
-		        </div>';
-		}
-
-	    $output .= $sidebar_value .
-          '</div>';
+		$output = '<div class="wpb_wrapper td_block_wrap ' . $this->get_block_classes( array( $atts['el_class'] ) ) . '" >';
+	    $output .= $sidebar_value;
+		$output .= '</div>';
 
 		return $output;
 	}

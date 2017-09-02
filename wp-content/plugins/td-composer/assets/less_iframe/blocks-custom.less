@@ -7,7 +7,7 @@
 
 
 .tdc-editing-vc_empty_space {
-  outline: 2px dotted #e8e8e8;
+  border: 1px dashed #e8e8e8;
 
   .tdc-editing-text {
     position: absolute;
@@ -23,12 +23,22 @@
 
 .tdc-element-selected {
   .tdc-editing-vc_empty_space {
-    outline: none;
+    border: none;
   }
 }
 
 .tdc-editing-vc_single_image a {
   width: 100%;
-  display: block;
-  background-size: cover;
+}
+
+.td_block_single_image.tdc-block-empty {
+  outline: none;
+  &:after {
+    content: 'Set image';
+    display: block;
+    font-size: 13px;
+    font-weight: normal;
+    text-align: center;
+    color: #666;
+  }
 }

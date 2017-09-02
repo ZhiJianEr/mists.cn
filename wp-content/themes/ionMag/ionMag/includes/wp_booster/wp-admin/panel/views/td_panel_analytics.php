@@ -1,5 +1,5 @@
 <!-- Analitycs -->
-<?php echo td_panel_generator::box_start('Analitycs'); ?>
+<?php echo td_panel_generator::box_start('Analytics'); ?>
 
     <!-- GOOGLE ASYNCHRONOUS ADS -->
     <div class="td-box-row">

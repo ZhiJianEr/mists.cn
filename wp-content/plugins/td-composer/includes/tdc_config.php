@@ -13,6 +13,7 @@ class tdc_config {
 
 
 	static $js_files_for_wp_admin = array (
+		'tdcWindowFrame'        => '/assets/js/tdcWindowFrame.js',
 		'tdcNotice'             => '/assets/js/tdcNotice.js',
 		'tdcShortcodeParser'    => '/assets/js/tdcShortcodeParser.js',
 		'tdcInit'               => '/assets/js/wp-admin/tdcInit.js',  //@todo this should load only on edit post in wp-admin
@@ -63,7 +64,10 @@ class tdc_config {
 		'cssJs'                 => '/assets/js/external/css.js',
 
 		'tdcLoader'             => '/assets/js/tdcLoader.js',
-		'tdcThemePanel'         => '/assets/js/tdcLivePanel.js',
+
+		'tdcLivePanel'          => '/assets/js/tdcLivePanel.js',
+		'tdcLivePanelMenuSettings'  => '/assets/js/tdcLivePanelMenuSettings.js',
+		'tdcLivePanelPageSettings'  => '/assets/js/tdcLivePanelPageSettings.js',
 	);
 
 
@@ -79,5 +83,19 @@ class tdc_config {
 	static $js_files_for_iframe = array (
 		'tdcComposerBlocksApi'  => '/assets/js/iframe/tdcComposerBlocksApi.js',
 		'tdcDebug'              => '/assets/js/tdcDebug.js',  //inject tdcDebug in the iframe also
+	);
+
+	static $js_files_for_live_css = array(
+		'td_live_css_state'                     => '/css-live/assets/js/tdLiveCssState.js',
+		'td_live_css_inject'                    => '/css-live/assets/js/tdLiveCssInject.js',
+		'td_live_css_less'                      => '/css-live/assets/external/less.min.js',
+	);
+
+	static $js_files_for_extension_live_css = array(
+		'td_live_css_main_tdc'                  => '/css-live/assets/js/tdLiveCssMainTdc.js',
+	);
+
+	static $js_files_for_plugin_live_css = array(
+		'td_live_css_main'                      => '/css-live/assets/js/tdLiveCssMain.js',
 	);
 }

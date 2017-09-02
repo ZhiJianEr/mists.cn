@@ -36,6 +36,7 @@ class vc_wp_recentcomments extends td_block {
             // block title wrap
             $buffy .= '<div class="td-block-title-wrap">';
                 $buffy .= $this->get_block_title(); //get the block title
+				$buffy .= $this->get_pull_down_filter(); //get the sub category filter for this block
             $buffy .= '</div>';
 
             $buffy .= '<div id=' . $this->block_uid . ' class="td_wp_recentcomments td_block_inner td-column-' . $td_column_number . ' ">';
